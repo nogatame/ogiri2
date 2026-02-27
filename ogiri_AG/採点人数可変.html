@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大喜利 採点表示システム</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --primary-color: #38bdf8;
+            --text-color: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --exclude-color: #ef4444;
+            --include-color: #22c55e;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .container {
+            background-color: var(--surface-color);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .settings-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+
+        .settings-panel label {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        select {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .judges-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .judge-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            flex: 1 1 120px;
+            max-width: 150px;
+        }
+
+        .judge-card.excluded {
+            opacity: 0.6;
+            border-color: var(--exclude-color);
+        }
+
+        .judge-card.included {
+            border-color: var(--include-color);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.1);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 999px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .excluded .status-badge {
+            display: block;
+            background-color: var(--exclude-color);
+            color: white;
+        }
+        
+        .included .status-badge {
+            display: block;
+            background-color: var(--include-color);
+            color: white;
+        }
+
+        .judge-card h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .judge-card input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.5rem;
+            font-size: 2.5rem;
+            text-align: center;
+            font-weight: bold;
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            outline: none;
+            border-bottom: 2px solid var(--border-color);
+            transition: border-color 0.2s;
+        }
+
+        .judge-card input:focus {
+            border-bottom-color: var(--primary-color);
+        }
+
+        .judge-card input::-webkit-outer-spin-button,
+        .judge-card input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .judge-card input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .result-section {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .result-score {
+            font-size: 6rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+            transition: color 0.3s;
+        }
+
+        .result-details {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .calculation-formula {
+            font-family: monospace;
+            font-size: 1.25rem;
+            color: var(--text-color);
+            background-color: rgba(0,0,0,0.2);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>大喜利 採点表示</h1>
+        
+        <div class="settings-panel">
+            <label>設定</label>
+            <div class="control-group">
+                <label for="judge-count">審査員数:</label>
+                <select id="judge-count">
+                    <option value="4">4人</option>
+                    <option value="5">5人</option>
+                    <option value="6">6人</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="judges-grid" id="judges-container">
+            <!-- Dynamic judge cards go here -->
+        </div>
+
+        <div class="result-section">
+            <div class="result-title">最終スコア</div>
+            <div class="result-score" id="total-score">-</div>
+            
+            <div class="result-details" id="result-details" style="display: none;">
+                <div class="detail-row" id="stats-row">
+                    <!-- Stats like Average will go here -->
+                </div>
+                <div>
+                    <span class="calculation-formula" id="formula-row"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="採点表示.js"></script>
+</body>
+</html>

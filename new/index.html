@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大喜利採点 総合システム</title>
+    <!-- Add Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --surface-hover: #334155;
+            --primary-color: #38bdf8;
+            --primary-hover: #0284c7;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+            --warning-color: #eab308;
+            --warning-hover: #ca8a04;
+            --text-color: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --accent-color: #8b5cf6;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            background-color: var(--surface-hover);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--border-color);
+            border-color: var(--primary-color);
+        }
+
+        button.primary {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+        }
+
+        button.primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.danger {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        button.danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        .header-panel {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--surface-color);
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+        }
+
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #timer_display {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--danger-color);
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .judge-panel {
+            background-color: var(--surface-color);
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        #alarm {
+            color: var(--warning-color);
+            font-weight: bold;
+            height: 24px;
+            margin-bottom: 10px;
+        }
+
+        .judges-grid {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pon-box {
+            width: 80px;
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .pon-box[data-status="done"] {
+            background-color: rgba(56, 189, 248, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: scale(1.05);
+        }
+
+        .pon-title {
+            position: absolute;
+            top: -25px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            width: 100%;
+            text-align: center;
+        }
+
+        .big-score {
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--text-color);
+            line-height: 1;
+            margin: 1rem 0;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+            min-height: 8rem;
+        }
+
+        .big-score.calculated {
+            color: var(--success-color);
+            text-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
+            transform: scale(1.05);
+            transition: all 0.4s ease;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .player-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .player-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+
+        .player-sum {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .player-name {
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        dialog {
+            background-color: var(--surface-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(3px);
+        }
+
+        dialog h3 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        select {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 1rem;
+            outline: none;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+
+<body>
+    <div class="header-panel">
+        <div class="timer-container">
+            <div id="timer_display">05:00</div>
+            <button id="timer_button" type="button" onclick="startTimer()">開始</button>
+        </div>
+        <div class="controls-group">
+            <button class="danger" type="button" onclick="reset()">完全リセット</button>
+            <button type="button" onclick="undo()">1つ戻る</button>
+            <button type="button" onclick="csv_register()">CSV出力</button>
+            <button type="button" onclick="openNameModal()">名前設定</button>
+            <button type="button" onclick="openSettings()">設定</button>
+            <button type="button" onclick="openExplain()">?</button>
+        </div>
+    </div>
+
+    <div class="judge-panel">
+        <div id="alarm"></div>
+        <div class="judges-grid" id="pons_container">
+            <!-- Pon slots generated by JS based on judge count -->
+        </div>
+        <div id="display" class="big-score">-</div>
+    </div>
+
+    <div class="players-grid" id="main_player_container">
+        <!-- Player cards fully rendered by JS to handle dynamically -->
+    </div>
+
+    <!-- Modals -->
+    <dialog id="settingsModal">
+        <h3>システム設定</h3>
+        <label>
+            プレイヤー人数 (1〜6):
+            <select id="player_count_select" onchange="changePlayerCount()">
+                <option value="1">1人</option>
+                <option value="2">2人</option>
+                <option value="3">3人</option>
+                <option value="4">4人</option>
+                <option value="5">5人</option>
+                <option value="6" selected>6人</option>
+            </select>
+        </label>
+        <label>
+            審査員人数 (4〜6):
+            <select id="judge_count_select" onchange="changeJudgeCount()">
+                <option value="4" selected>4人</option>
+                <option value="5">5人</option>
+                <option value="6">6人</option>
+            </select>
+        </label>
+        <label>
+            制限時間 (1〜6分):
+            <select id="timer_count_select" onchange="changeTimerCount()">
+                <option value="1">1分</option>
+                <option value="2">2分</option>
+                <option value="3">3分</option>
+                <option value="4">4分</option>
+                <option value="5" selected>5分</option>
+                <option value="6">6分</option>
+            </select>
+        </label>
+        <div class="dialog-actions">
+            <button class="primary" onclick="closeSettings()">完了</button>
+        </div>
+    </dialog>
+
+    <dialog id="nameModal">
+        <h3>プレイヤー名設定</h3>
+        <div id="modal_player_container" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Generated by JS -->
+        </div>
+        <div class="dialog-actions">
+            <button onclick="closeNameModal()">キャンセル</button>
+            <button class="primary" onclick="selectName()">保存</button>
+        </div>
+    </dialog>
+
+    <dialog id="explain">
+        <h3>使い方説明</h3>
+        <p>1. 各審査員が手元の端末で「shared_value1〜6」にスコアを入力。<br>
+            2. 設定した審査員人数のスコアが揃うと、中央のスコアが自動計算されて確定します。<br>
+            <small style="color:var(--text-secondary);">(※5人の場合は平均から最も遠い1つを除外、6人の場合は2つを除外して乗算されます)</small><br>
+            3. 該当のプレイヤーの「登録」ボタンを押して得点を加算します。<br>
+            4. 「CSV出力」でGoogleスプレッドシートに記録可能です。
+        </p>
+        <div class="dialog-actions">
+            <button class="primary" onclick="closeExplain()">閉じる</button>
+        </div>
+    </dialog>
+
+    <script>
+        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyv89MPyo1SDdaimgmednqDcUD6jQf4T-l9gFds9g6k3nX9fB7mgoI1uI4oC2eGEZ2O/exec";
+
+        async function callGas(action, payload) {
+            if (GAS_WEBAPP_URL.includes("ここにGASでデプロイした")) return { success: false, error: "GAS_WEBAPP_URL is not set" };
+            try {
+                const response = await fetch(GAS_WEBAPP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ action: action, data: payload })
+                });
+                return await response.json();
+            } catch (error) {
+                console.error("Error calling GAS:", error);
+                return { success: false, error: error };
+            }
+        }
+
+        let firebaseConfig = {
+            apiKey: "AIzaSyC9Q0Nuo6EsoWmDFaMFm5zLs2d-e4JgC2A",
+            databaseURL: "https://kousoku-6477e-default-rtdb.firebaseio.com",
+            projectId: "kousoku-6477e"
+        };
+
+        let db;
+        let timeLeft = 300;
+        let defaultTimerMinutes = 5;
+        let TimerRunning = false;
+        let TimerInterval;
+        let lastAction = { playerNum: null, score: 0 };
+        let maxPlayers = 6;
+
+        // Settings configuration
+        let maxJudgesSystem = 6;
+        let judgeCount = 4;
+        let data = ["", "", "", "", "", ""];
+
+        let displayElement = document.getElementById('display');
+        let alarmElement = document.getElementById('alarm');
+
+        // Dynamic Initialization functions
+        function renderPons() {
+            const container = document.getElementById('pons_container');
+            container.innerHTML = '';
+            for (let i = 1; i <= judgeCount; i++) {
+                const box = document.createElement('div');
+                box.className = 'pon-box';
+                box.id = 'pon' + i;
+
+                const title = document.createElement('div');
+                title.className = 'pon-title';
+                title.innerText = `審査員 ${i}`;
+
+                box.appendChild(title);
+                container.appendChild(box);
+            }
+        }
+
+        function renderPlayers() {
+            const playerContainer = document.getElementById('main_player_container');
+            const modalContainer = document.getElementById('modal_player_container');
+
+            // Backup current names/scores if they exist
+            let currentNames = [];
+            let currentScores = [];
+            for (let i = 1; i <= 6; i++) {
+                let nameEl = document.getElementById('player_name' + i);
+                let scoreEl = document.getElementById('sum_score' + i);
+                currentNames.push(nameEl ? nameEl.innerText : "----");
+                currentScores.push(scoreEl ? scoreEl.innerText : "0");
+            }
+
+            playerContainer.innerHTML = '';
+            modalContainer.innerHTML = '';
+
+            for (let i = 1; i <= maxPlayers; i++) {
+                // Main UI
+                const pcard = document.createElement('div');
+                pcard.className = 'player-card';
+                pcard.innerHTML = `
+                    <div>
+                        <div class="player-sum" id="sum_score${i}">${currentScores[i - 1]}</div>
+                        <div class="player-name" id="player_name${i}">${currentNames[i - 1]}</div>
+                    </div>
+                    <button class="primary" type="button" onclick="point_register(${i})">登録</button>
+                `;
+                playerContainer.appendChild(pcard);
+
+                // Modal UI
+                const mbox = document.createElement('label');
+                mbox.style.display = 'flex';
+                mbox.style.justifyContent = 'space-between';
+                mbox.style.alignItems = 'center';
+                mbox.innerHTML = `
+                    プレイヤー${i}:
+                    <select id="player_select${i}" style="width: 70%; margin-bottom: 0;">
+                        <option value="----">----</option>
+                        <option value="a">a</option>
+                        <option value="b">b</option>
+                        <option value="c">c</option>
+                        <option value="d">d</option>
+                        <option value="e">e</option>
+                        <option value="f">f</option>
+                        <option value="${currentNames[i - 1]}" style="display:none;" selected>${currentNames[i - 1]}</option>
+                    </select>
+                `;
+                modalContainer.appendChild(mbox);
+            }
+        }
+
+        function initializeFirebase() {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                setupFirebaseListeners();
+            } else {
+                setTimeout(initializeFirebase, 100);
+            }
+        }
+
+        function setupFirebaseListeners() {
+            for (let i = 1; i <= maxJudgesSystem; i++) {
+                db.ref('shared_value' + i).on('value', (snapshot) => {
+                    let val = snapshot.val();
+                    data[i - 1] = val;
+                    if (val && i <= judgeCount) {
+                        setPon(i, true);
+                        calculateAndShow();
+                    } else if (!val && i <= judgeCount) {
+                        setPon(i, false);
+                    }
+                });
+            }
+        }
+
+        function setPon(judge_num, active) {
+            let ponElement = document.getElementById('pon' + judge_num);
+            if (ponElement) {
+                if (active) {
+                    ponElement.innerText = "A"; // Hides actual score
+                    ponElement.setAttribute('data-status', 'done');
+                } else {
+                    ponElement.innerText = "";
+                    ponElement.removeAttribute('data-status');
+                }
+
+                // Re-append title
+                if (ponElement.querySelector('.pon-title') === null) {
+                    const title = document.createElement('div');
+                    title.className = 'pon-title';
+                    title.innerText = `審査員 ${judge_num}`;
+                    ponElement.appendChild(title);
+                }
+            }
+        }
+
+        const calculateAndShow = () => {
+            let currentScores = data.slice(0, judgeCount);
+            if (currentScores.every(val => val !== "" && val !== null && val !== undefined)) {
+                // All required judges have inputted
+                const validScores = currentScores.map((s, i) => ({ value: Number(s), index: i }));
+                const sum = validScores.reduce((a, b) => a + b.value, 0);
+
+                let excludedIndices = [];
+                if (judgeCount > 4) {
+                    const excludeCount = judgeCount - 4; // 5 -> 1 exclude, 6 -> 2 excludes
+                    const withDistances = validScores.map(s => ({
+                        ...s,
+                        distInt: Math.abs(s.value * judgeCount - sum)
+                    }));
+
+                    withDistances.sort((a, b) => {
+                        if (b.distInt !== a.distInt) return b.distInt - a.distInt;
+                        return a.value - b.value;
+                    });
+
+                    excludedIndices = withDistances.slice(0, excludeCount).map(e => e.index);
+                }
+
+                let finalProduct = 1;
+                validScores.forEach(s => {
+                    if (!excludedIndices.includes(s.index)) {
+                        finalProduct *= s.value;
+                    }
+                });
+
+                displayElement.innerText = finalProduct;
+                displayElement.classList.add('calculated');
+            } else {
+                displayElement.innerText = "-";
+                displayElement.classList.remove('calculated');
+            }
+        };
+
+        function point_register(player_number) {
+            let currentScores = data.slice(0, judgeCount);
+            if (currentScores.every(val => val !== "" && val !== null && val !== undefined)) {
+                let time = new Date();
+                let timestanp = String(time.getHours()).padStart(2, '0') + ":" + String(time.getMinutes()).padStart(2, '0');
+
+                let selected_player = document.getElementById("player_name" + player_number).innerText;
+                let score = Number(displayElement.innerText);
+                const sum_scoreElement = document.getElementById('sum_score' + player_number);
+
+                let sum_score = Number(score) + Number(sum_scoreElement.innerText);
+                sum_scoreElement.innerText = sum_score;
+
+                let result = [timestanp, selected_player, score, "合計:" + sum_score, "審査点:"].concat(currentScores);
+
+                callGas("saveData", result);
+
+                lastAction.playerNum = player_number;
+                lastAction.score = score;
+
+                resetCurrentRound();
+            } else {
+                alarmElement.innerText = "採点が終わっていません";
+                setTimeout(() => { alarmElement.innerText = ""; }, 2000);
+            }
+        }
+
+        function resetCurrentRound() {
+            displayElement.innerText = "-";
+            displayElement.classList.remove('calculated');
+            data = ["", "", "", "", "", ""];
+            for (let i = 1; i <= maxJudgesSystem; i++) {
+                setPon(i, false);
+                db.ref("shared_value" + i).set("");
+            }
+        }
+
+        function undo() {
+            if (data.some(val => val !== "" && val !== null && val !== undefined)) {
+                resetCurrentRound();
+            } else {
+                if (lastAction.playerNum === null) {
+                    alert("取り消せる操作がありません。");
+                    return;
+                }
+                if (confirm("直前の得点登録を取り消しますか？")) {
+                    const targetScoreElement = document.getElementById('sum_score' + lastAction.playerNum);
+                    let currentSum = Number(targetScoreElement.innerText);
+                    targetScoreElement.innerText = currentSum - lastAction.score;
+
+                    callGas("undoLastRow", null);
+
+                    lastAction.playerNum = null;
+                    lastAction.score = 0;
+                    alert("取り消しました。");
+                }
+            }
+            callGas("saveData", ["undoしました"]);
+        }
+
+        function reset() {
+            if (confirm("全てのスコアを本当に0にリセットしますか？")) {
+                let playername_csv = [];
+                let score_csv = [];
+                for (let i = 1; i <= maxPlayers; i++) {
+                    playername_csv.push(document.getElementById("player_name" + i).innerText);
+                    score_csv.push(document.getElementById("sum_score" + i).innerText);
+                }
+                callGas("saveCsv", [playername_csv, score_csv]);
+
+                resetCurrentRound();
+                for (let i = 1; i <= maxPlayers; i++) {
+                    let sum_scoreElement = document.getElementById('sum_score' + i);
+                    if (sum_scoreElement) sum_scoreElement.innerText = 0;
+                }
+                lastAction = { playerNum: null, score: 0 };
+
+                // タイマーのリセット
+                clearInterval(TimerInterval);
+                TimerRunning = false;
+                timeLeft = defaultTimerMinutes * 60;
+                document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+                const btn = document.getElementById('timer_button');
+                if (btn) {
+                    btn.innerText = "開始";
+                    btn.className = "primary";
+                }
+            }
+        }
+
+        // --- Modals and Actions ---
+        const settingsModal = document.getElementById('settingsModal');
+        const nameModal = document.getElementById('nameModal');
+        const explain = document.getElementById('explain');
+
+        function openSettings() { settingsModal.showModal(); }
+        function closeSettings() { settingsModal.close(); }
+
+        function changePlayerCount() {
+            maxPlayers = parseInt(document.getElementById('player_count_select').value, 10);
+            renderPlayers();
+        }
+
+        function changeTimerCount() {
+            defaultTimerMinutes = parseInt(document.getElementById('timer_count_select').value, 10);
+            if (!TimerRunning) {
+                timeLeft = defaultTimerMinutes * 60;
+                document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+            }
+        }
+
+        function changeJudgeCount() {
+            const newJudgeCount = parseInt(document.getElementById('judge_count_select').value, 10);
+            if (newJudgeCount !== judgeCount) {
+                if (confirm("審査員人数を変更します。現在の入力途中のスコアはリセットされますがよろしいですか？")) {
+                    judgeCount = newJudgeCount;
+                    renderPons();
+                    resetCurrentRound();
+                } else {
+                    // revert select
+                    document.getElementById('judge_count_select').value = judgeCount;
+                }
+            }
+        }
+
+        function openNameModal() { nameModal.showModal(); }
+        function closeNameModal() { nameModal.close(); }
+
+        function selectName() {
+            for (let i = 1; i <= maxPlayers; i++) {
+                let sel = document.getElementById("player_select" + i);
+                if (sel && sel.value !== "----") {
+                    document.getElementById("player_name" + i).innerText = sel.value;
+                }
+            }
+            nameModal.close();
+        }
+
+        function openExplain() { explain.showModal(); }
+        function closeExplain() { explain.close(); }
+
+        async function csv_register() {
+            let playername_csv = [];
+            let score_csv = [];
+            for (let i = 1; i <= maxPlayers; i++) {
+                playername_csv.push(document.getElementById("player_name" + i).innerText);
+                score_csv.push(document.getElementById("sum_score" + i).innerText);
+            }
+            try {
+                const response = await callGas("saveCsv", [playername_csv, score_csv]);
+                if (response && response.success) {
+                    alert("CSVデータを出力しました（スプレッドシートに保存されました）");
+                } else {
+                    alert("保存に失敗しました");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        function startTimer() {
+            const btn = document.getElementById('timer_button');
+            if (!TimerRunning) {
+                TimerRunning = true;
+                btn.innerText = "停止";
+                btn.className = "danger";
+                TimerInterval = setInterval(() => {
+                    timeLeft--;
+                    const minute = Math.floor(timeLeft / 60);
+                    const second = timeLeft % 60;
+                    document.getElementById('timer_display').innerText =
+                        String(minute).padStart(2, '0') + ":" + String(second).padStart(2, '0');
+                    if (timeLeft <= 0) {
+                        clearInterval(TimerInterval);
+                        TimerRunning = false;
+                        btn.innerText = "開始";
+                        btn.className = "primary";
+                    }
+                }, 1000);
+            } else {
+                TimerRunning = false;
+                clearInterval(TimerInterval);
+                btn.innerText = "開始";
+                btn.className = "primary";
+            }
+        }
+
+        // --- Start ---
+        renderPons();
+        renderPlayers();
+        initializeFirebase();
+    </script>
+</body>
+
+</html>
