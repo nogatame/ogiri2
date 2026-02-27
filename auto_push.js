@@ -23,35 +23,36 @@ function runGitCommands() {
             // Check if nothing to commit
             if (output.includes('nothing to commit') || output.includes('nothing added to commit')) {
                 console.log('Nothing new to commit.');
+                // Try push anyway in case there are unpushed commits
+                pushChanges();
                 return;
             }
 
             if (error) {
                 console.error('git commit error:', output);
-                // Continue despite error
             } else {
                 console.log('Committed successfully.');
+                pushChanges();
             }
-
-            // Push
-            console.log('Pushing to GitHub...');
-            exec('git push', { cwd: watchDir }, (error, stdout, stderr) => {
-                const pushOutput = stdout + (stderr || '');
-                if (error) {
-                    console.error('git push error (Continuing automatically):', pushOutput);
-                    // Continuing automatically as requested
-                } else {
-                    console.log('Pushed to GitHub successfully:', pushOutput);
-                }
-            });
         });
+    });
+}
+
+function pushChanges() {
+    exec('git push', { cwd: watchDir }, (error, stdout, stderr) => {
+        const pushOutput = stdout + (stderr || '');
+        if (error) {
+            console.error('git push info (Continuing automatically):', pushOutput.trim());
+        } else {
+            console.log('Pushed to GitHub successfully:', pushOutput.trim());
+        }
     });
 }
 
 console.log(`Watching for changes in ${watchDir}...`);
 fs.watch(watchDir, { recursive: true }, (eventType, filename) => {
     // Ignore .git directory, node_modules, and the script itself
-    if (!filename || filename.includes('.git') || filename.includes('node_modules') || filename === 'auto_push.js') {
+    if (!filename || filename.includes('.git') || filename.includes('node_modules') || filename === 'auto_push.js' || filename === 'package.json') {
         return;
     }
 
