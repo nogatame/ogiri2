@@ -261,6 +261,44 @@
             gap: 10px;
             margin-top: 1.5rem;
         }
+
+        /* Gauge Styles */
+        .player-gauge {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .liquid {
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(to top, var(--accent-color), var(--primary-color));
+            transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .liquid::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            filter: blur(2px);
+        }
+
+        body[data-show-gauge="false"] .player-gauge {
+            display: none;
+        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -331,6 +369,10 @@
             1点・81点時の効果音:
             <input type="checkbox" id="sound_effect_toggle" checked onchange="toggleSounds()"
                 style="width: auto; margin: 0;">
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
+            スコアゲージの表示:
+            <input type="checkbox" id="gauge_toggle" checked onchange="toggleGauge()" style="width: auto; margin: 0;">
         </label>
         <div class="dialog-actions">
             <button class="primary" onclick="closeSettings()">完了</button>
@@ -536,6 +578,7 @@
         let lastAction = { playerNum: null, score: 0 };
         let maxPlayers = 6;
         let enableSpecialSounds = localStorage.getItem('enableSpecialSounds') !== 'false';
+        let showGauge = localStorage.getItem('showGauge') !== 'false';
 
         // Settings configuration
         let maxJudgesSystem = 6;
@@ -579,9 +622,13 @@
                 // Main UI
                 const pcard = document.createElement('div');
                 pcard.className = 'player-card';
+                const scoreVal = Number(currentScores[i - 1]) || 0;
                 pcard.innerHTML = `
+                    <div class="player-gauge">
+                        <div class="liquid" id="liquid${i}" style="height: ${Math.min(100, (scoreVal / 300) * 100)}%"></div>
+                    </div>
                     <div>
-                        <div class="player-sum" id="sum_score${i}">${currentScores[i - 1]}</div>
+                        <div class="player-sum" id="sum_score${i}">${scoreVal}</div>
                         <div class="player-name" id="player_name${i}">${currentNames[i - 1]}</div>
                     </div>
                     <button class="primary" type="button" onclick="point_register(${i})">登録</button>
@@ -712,6 +759,10 @@
                 const newSum = Number(score) + oldSum;
 
                 animateNumber(sum_scoreElement, oldSum, newSum, 600);
+                const liquid = document.getElementById('liquid' + player_number);
+                if (liquid) {
+                    liquid.style.height = Math.min(100, (newSum / 300) * 100) + "%";
+                }
 
                 let result = [timestamp, selected_player, score, "合計:" + newSum, "審査点:"].concat(currentScores);
 
@@ -752,7 +803,13 @@
                 if (confirm("直前の得点登録を取り消しますか？")) {
                     const targetScoreElement = document.getElementById('sum_score' + lastAction.playerNum);
                     let currentSum = Number(targetScoreElement.innerText);
-                    targetScoreElement.innerText = currentSum - lastAction.score;
+                    const newSum = currentSum - lastAction.score;
+                    targetScoreElement.innerText = newSum;
+
+                    const liquid = document.getElementById('liquid' + lastAction.playerNum);
+                    if (liquid) {
+                        liquid.style.height = Math.min(100, (newSum / 300) * 100) + "%";
+                    }
 
                     callGas("undoLastRow", null);
 
@@ -778,6 +835,8 @@
                 for (let i = 1; i <= maxPlayers; i++) {
                     let sum_scoreElement = document.getElementById('sum_score' + i);
                     if (sum_scoreElement) sum_scoreElement.innerText = 0;
+                    let liquid = document.getElementById('liquid' + i);
+                    if (liquid) liquid.style.height = "0%";
                 }
                 lastAction = { playerNum: null, score: 0 };
 
@@ -832,6 +891,12 @@
         function toggleSounds() {
             enableSpecialSounds = document.getElementById('sound_effect_toggle').checked;
             localStorage.setItem('enableSpecialSounds', enableSpecialSounds);
+        }
+
+        function toggleGauge() {
+            showGauge = document.getElementById('gauge_toggle').checked;
+            localStorage.setItem('showGauge', showGauge);
+            document.body.setAttribute('data-show-gauge', showGauge);
         }
 
         function openNameModal() { nameModal.showModal(); }
@@ -899,6 +964,8 @@
 
         // --- Start ---
         document.getElementById('sound_effect_toggle').checked = enableSpecialSounds;
+        document.getElementById('gauge_toggle').checked = showGauge;
+        document.body.setAttribute('data-show-gauge', showGauge);
         renderPons();
         renderPlayers();
         initializeFirebase();
