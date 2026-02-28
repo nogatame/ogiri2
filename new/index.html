@@ -514,6 +514,25 @@
             } catch (e) { }
         }
 
+        function playBuzz() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 0.3);
+            } catch (e) { }
+        }
+
         function animateNumber(element, start, end, duration, onComplete) {
             if (element._animId) {
                 cancelAnimationFrame(element._animId);
@@ -773,6 +792,7 @@
 
                 resetCurrentRound();
             } else {
+                playBuzz();
                 alarmElement.innerText = "採点が終わっていません";
                 setTimeout(() => { alarmElement.innerText = ""; }, 2000);
             }
@@ -797,6 +817,7 @@
                 resetCurrentRound();
             } else {
                 if (lastAction.playerNum === null) {
+                    playBuzz();
                     alert("取り消せる操作がありません。");
                     return;
                 }
