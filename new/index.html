@@ -135,7 +135,7 @@
             justify-content: center;
             gap: 1.5rem;
             margin-bottom: 2rem;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .pon-box {
@@ -285,7 +285,7 @@
         </div>
         <div class="controls-group">
             <button class="danger" type="button" onclick="reset()">完全リセット</button>
-            <button type="button" onclick="undo()">1つ戻る</button>
+            <button type="button" onclick="undo()">取り消し</button>
             <button type="button" onclick="csv_register()">CSV出力</button>
             <button type="button" onclick="openNameModal()">名前設定</button>
             <button type="button" onclick="openSettings()">設定</button>
