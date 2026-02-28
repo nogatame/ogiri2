@@ -327,6 +327,11 @@
                 <option value="6">6分</option>
             </select>
         </label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            1点・81点時の効果音:
+            <input type="checkbox" id="sound_effect_toggle" checked onchange="toggleSounds()"
+                style="width: auto; margin: 0;">
+        </label>
         <div class="dialog-actions">
             <button class="primary" onclick="closeSettings()">完了</button>
         </div>
@@ -530,6 +535,7 @@
         let TimerInterval;
         let lastAction = { playerNum: null, score: 0 };
         let maxPlayers = 6;
+        let enableSpecialSounds = localStorage.getItem('enableSpecialSounds') !== 'false';
 
         // Settings configuration
         let maxJudgesSystem = 6;
@@ -679,8 +685,10 @@
                 const oldVal = isNaN(parseInt(displayElement.innerText)) ? 0 : parseInt(displayElement.innerText);
                 if (oldVal !== finalProduct) {
                     animateNumber(displayElement, oldVal, finalProduct, 800, () => {
-                        if (finalProduct === 81) playShing();
-                        if (finalProduct === 1) playDepressed();
+                        if (enableSpecialSounds) {
+                            if (finalProduct === 81) playShing();
+                            if (finalProduct === 1) playDepressed();
+                        }
                     });
                 }
                 displayElement.classList.add('calculated');
@@ -821,6 +829,11 @@
             }
         }
 
+        function toggleSounds() {
+            enableSpecialSounds = document.getElementById('sound_effect_toggle').checked;
+            localStorage.setItem('enableSpecialSounds', enableSpecialSounds);
+        }
+
         function openNameModal() { nameModal.showModal(); }
         function closeNameModal() { nameModal.close(); }
 
@@ -885,6 +898,7 @@
         }
 
         // --- Start ---
+        document.getElementById('sound_effect_toggle').checked = enableSpecialSounds;
         renderPons();
         renderPlayers();
         initializeFirebase();
