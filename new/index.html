@@ -448,6 +448,25 @@
             } catch (e) { }
         }
 
+        function playPon() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 0.2);
+            } catch (e) { }
+        }
+
         function animateNumber(element, start, end, duration, onComplete) {
             if (element._animId) {
                 cancelAnimationFrame(element._animId);
@@ -615,6 +634,9 @@
             let ponElement = document.getElementById('pon' + judge_num);
             if (ponElement) {
                 if (active) {
+                    if (ponElement.getAttribute('data-status') !== 'done') {
+                        playPon();
+                    }
                     ponElement.innerHTML = '<span style="color: var(--success-color);">●</span>';
                     ponElement.setAttribute('data-status', 'done');
                 } else {
@@ -682,9 +704,6 @@
                 const newSum = Number(score) + oldSum;
 
                 animateNumber(sum_scoreElement, oldSum, newSum, 600);
-
-                if (score === 81) playShing();
-                if (score === 1) playDepressed();
 
                 let result = [timestamp, selected_player, score, "合計:" + newSum, "審査点:"].concat(currentScores);
 
