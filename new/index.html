@@ -819,7 +819,11 @@
                 const oldSum = Number(sum_scoreElement.innerText) || 0;
                 const newSum = Number(score) + oldSum;
 
-                animateNumber(sum_scoreElement, oldSum, newSum, 600);
+                // アニメーション完了後に状態を保存するように変更
+                animateNumber(sum_scoreElement, oldSum, newSum, 600, () => {
+                    saveState();
+                });
+
                 const liquid = document.getElementById('liquid' + player_number);
                 if (liquid) {
                     liquid.style.height = Math.min(100, (newSum / 300) * 100) + "%";
@@ -832,7 +836,6 @@
                 lastAction.playerNum = player_number;
                 lastAction.score = score;
 
-                setTimeout(saveState, 100); // UIの更新を待ってから保存
                 resetCurrentRound();
             } else {
                 playBuzz();
