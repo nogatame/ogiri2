@@ -40,8 +40,8 @@ function runGitCommands() {
 
 function pushChanges() {
     console.log('Pushing to GitHub main branch...');
-    // Push the current branch (master) to the remote main branch
-    exec('git push origin master:main --force', { cwd: watchDir }, (error, stdout, stderr) => {
+    // Push the current main branch to remote main
+    exec('git push origin main', { cwd: watchDir }, (error, stdout, stderr) => {
         const pushOutput = stdout + (stderr || '');
         if (error) {
             console.error('Push failed (Continuing automatically):', pushOutput.trim());
