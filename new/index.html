@@ -599,10 +599,43 @@
         let enableSpecialSounds = localStorage.getItem('enableSpecialSounds') !== 'false';
         let showGauge = localStorage.getItem('showGauge') !== 'false';
 
-        // Settings configuration
-        let maxJudgesSystem = 6;
-        let judgeCount = 4;
-        let data = ["", "", "", "", "", ""];
+        // Persistence keys
+        const STORAGE_KEY = 'ogiri_system_data';
+
+        function saveState() {
+            const state = {
+                maxPlayers,
+                judgeCount,
+                defaultTimerMinutes,
+                playerNames: [],
+                playerScores: []
+            };
+            for (let i = 1; i <= 6; i++) {
+                const nameEl = document.getElementById('player_name' + i);
+                const scoreEl = document.getElementById('sum_score' + i);
+                state.playerNames.push(nameEl ? nameEl.innerText : "----");
+                state.playerScores.push(scoreEl ? scoreEl.innerText : "0");
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return null;
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        const savedData = loadState();
+        if (savedData) {
+            maxPlayers = savedData.maxPlayers || 6;
+            judgeCount = savedData.judgeCount || 4;
+            defaultTimerMinutes = savedData.defaultTimerMinutes || 5;
+            timeLeft = defaultTimerMinutes * 60;
+        }
 
         let displayElement = document.getElementById('display');
         let alarmElement = document.getElementById('alarm');
@@ -624,14 +657,18 @@
             const playerContainer = document.getElementById('main_player_container');
             const modalContainer = document.getElementById('modal_player_container');
 
-            // Backup current names/scores if they exist
-            let currentNames = [];
-            let currentScores = [];
-            for (let i = 1; i <= 6; i++) {
-                let nameEl = document.getElementById('player_name' + i);
-                let scoreEl = document.getElementById('sum_score' + i);
-                currentNames.push(nameEl ? nameEl.innerText : "----");
-                currentScores.push(scoreEl ? scoreEl.innerText : "0");
+            const saved = loadState();
+            let currentNames = saved ? saved.playerNames : [];
+            let currentScores = saved ? saved.playerScores : [];
+
+            // If no saved data or incomplete, fallback to DOM or defaults
+            if (currentNames.length === 0) {
+                for (let i = 1; i <= 6; i++) {
+                    let nameEl = document.getElementById('player_name' + i);
+                    let scoreEl = document.getElementById('sum_score' + i);
+                    currentNames.push(nameEl ? nameEl.innerText : "----");
+                    currentScores.push(scoreEl ? scoreEl.innerText : "0");
+                }
             }
 
             playerContainer.innerHTML = '';
@@ -790,6 +827,7 @@
                 lastAction.playerNum = player_number;
                 lastAction.score = score;
 
+                setTimeout(saveState, 100); // UIの更新を待ってから保存
                 resetCurrentRound();
             } else {
                 playBuzz();
@@ -836,6 +874,7 @@
 
                     lastAction.playerNum = null;
                     lastAction.score = 0;
+                    saveState();
                     alert("取り消しました。");
                 }
             }
@@ -871,6 +910,8 @@
                     btn.innerText = "開始";
                     btn.className = "primary";
                 }
+                localStorage.removeItem(STORAGE_KEY);
+                // 必要最低限の再保存（設定値のみ保持したい場合はここで調整可能。今回は完全に消す）
             }
         }
 
@@ -884,11 +925,13 @@
 
         function changePlayerCount() {
             maxPlayers = parseInt(document.getElementById('player_count_select').value, 10);
+            saveState();
             renderPlayers();
         }
 
         function changeTimerCount() {
             defaultTimerMinutes = parseInt(document.getElementById('timer_count_select').value, 10);
+            saveState();
             if (!TimerRunning) {
                 timeLeft = defaultTimerMinutes * 60;
                 document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
@@ -900,6 +943,7 @@
             if (newJudgeCount !== judgeCount) {
                 if (confirm("審査員人数を変更します。現在の入力途中のスコアはリセットされますがよろしいですか？")) {
                     judgeCount = newJudgeCount;
+                    saveState();
                     renderPons();
                     resetCurrentRound();
                 } else {
@@ -930,6 +974,7 @@
                     document.getElementById("player_name" + i).innerText = sel.value;
                 }
             }
+            saveState();
             nameModal.close();
         }
 
@@ -984,6 +1029,12 @@
         }
 
         // --- Start ---
+        // UIを保存された設定に合わせる
+        document.getElementById('player_count_select').value = maxPlayers;
+        document.getElementById('judge_count_select').value = judgeCount;
+        document.getElementById('timer_count_select').value = defaultTimerMinutes;
+        document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+
         document.getElementById('sound_effect_toggle').checked = enableSpecialSounds;
         document.getElementById('gauge_toggle').checked = showGauge;
         document.body.setAttribute('data-show-gauge', showGauge);
