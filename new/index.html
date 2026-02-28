@@ -418,6 +418,8 @@
                 box.className = 'pon-box';
                 box.id = 'pon' + i;
 
+                box.innerHTML = '<span style="color: var(--text-secondary);">○</span>';
+
                 const title = document.createElement('div');
                 title.className = 'pon-title';
                 title.innerText = `審査員 ${i}`;
@@ -508,10 +510,10 @@
             let ponElement = document.getElementById('pon' + judge_num);
             if (ponElement) {
                 if (active) {
-                    ponElement.innerText = "A"; // Hides actual score
+                    ponElement.innerHTML = '<span style="color: var(--success-color);">●</span>'; // Hides actual score
                     ponElement.setAttribute('data-status', 'done');
                 } else {
-                    ponElement.innerText = "";
+                    ponElement.innerHTML = '<span style="color: var(--text-secondary);">○</span>';
                     ponElement.removeAttribute('data-status');
                 }
 
@@ -745,7 +747,7 @@
             } else {
                 TimerRunning = false;
                 clearInterval(TimerInterval);
-                btn.innerText = "開始";
+               .in = "開始";
                 btn.className = "primary";
             }
         }
