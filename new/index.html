@@ -449,6 +449,9 @@
         }
 
         function animateNumber(element, start, end, duration, onComplete) {
+            if (element._animId) {
+                cancelAnimationFrame(element._animId);
+            }
             let startTimestamp = null;
             const diff = end - start;
             if (diff === 0 && start !== 0) {
@@ -468,13 +471,14 @@
                 }
 
                 if (progress < 1) {
-                    window.requestAnimationFrame(step);
+                    element._animId = window.requestAnimationFrame(step);
                 } else {
                     element.innerText = end;
+                    element._animId = null;
                     if (onComplete) onComplete();
                 }
             };
-            window.requestAnimationFrame(step);
+            element._animId = window.requestAnimationFrame(step);
         }
 
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyv89MPyo1SDdaimgmednqDcUD6jQf4T-l9gFds9g6k3nX9fB7mgoI1uI4oC2eGEZ2O/exec";
@@ -601,6 +605,7 @@
                         calculateAndShow();
                     } else if (!val && i <= judgeCount) {
                         setPon(i, false);
+                        calculateAndShow();
                     }
                 });
             }
@@ -658,7 +663,7 @@
                 }
                 displayElement.classList.add('calculated');
             } else {
-                displayElement.innerText = "-";
+                displayElement.innerText = "";
                 displayElement.classList.remove('calculated');
             }
         };
@@ -667,7 +672,7 @@
             let currentScores = data.slice(0, judgeCount);
             if (currentScores.every(val => val !== "" && val !== null && val !== undefined)) {
                 let time = new Date();
-                let timestanp = String(time.getHours()).padStart(2, '0') + ":" + String(time.getMinutes()).padStart(2, '0');
+                let timestamp = String(time.getHours()).padStart(2, '0') + ":" + String(time.getMinutes()).padStart(2, '0');
 
                 let selected_player = document.getElementById("player_name" + player_number).innerText;
                 let score = Number(displayElement.innerText);
@@ -681,7 +686,7 @@
                 if (score === 81) playShing();
                 if (score === 1) playDepressed();
 
-                let result = [timestanp, selected_player, score, "合計:" + sum_score, "審査点:"].concat(currentScores);
+                let result = [timestamp, selected_player, score, "合計:" + newSum, "審査点:"].concat(currentScores);
 
                 callGas("saveData", result);
 
@@ -696,7 +701,11 @@
         }
 
         function resetCurrentRound() {
-            displayElement.innerText = "-";
+            if (displayElement._animId) {
+                cancelAnimationFrame(displayElement._animId);
+                displayElement._animId = null;
+            }
+            displayElement.innerText = "";
             displayElement.classList.remove('calculated');
             data = ["", "", "", "", "", ""];
             for (let i = 1; i <= maxJudgesSystem; i++) {
