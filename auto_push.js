@@ -39,13 +39,25 @@ function runGitCommands() {
 }
 
 function pushChanges() {
-    exec('git push', { cwd: watchDir }, (error, stdout, stderr) => {
-        const pushOutput = stdout + (stderr || '');
+    console.log('Pushing only new folder to GitHub main...');
+    exec('git subtree split --prefix new', { cwd: watchDir }, (error, stdout, stderr) => {
         if (error) {
-            console.error('git push info (Continuing automatically):', pushOutput.trim());
-        } else {
-            console.log('Pushed to GitHub successfully:', pushOutput.trim());
+            console.error('git subtree split error (Continuing automatically):', stderr);
+            return;
         }
+
+        // Extract the last line which contains the commit hash for the subtree
+        const lines = stdout.trim().split('\n');
+        const subtreeCommit = lines[lines.length - 1].trim();
+
+        exec(`git push origin ${subtreeCommit}:main --force`, { cwd: watchDir }, (err2, out2, stderr2) => {
+            const pushOutput = out2 + (stderr2 || '');
+            if (err2) {
+                console.error('git push error (Continuing automatically):', pushOutput.trim());
+            } else {
+                console.log('Pushed new folder to GitHub main successfully:', pushOutput.trim());
+            }
+        });
     });
 }
 
