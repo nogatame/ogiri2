@@ -357,6 +357,126 @@
     </dialog>
 
     <script>
+        // --- Sound Effects ---
+        let audioCtx = null;
+        function initAudio() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            } catch (e) {
+                console.error("Audio initialization failed:", e);
+            }
+        }
+
+        function playTick(freq = 880) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 0.1);
+            } catch (e) { }
+        }
+
+        function playShing() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const now = audioCtx.currentTime;
+                // Sharp attack
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(3520, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 1.2);
+
+                // Crystal resonance
+                const osc2 = audioCtx.createOscillator();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(1760, now);
+                const gain2 = audioCtx.createGain();
+                gain2.gain.setValueAtTime(0.1, now);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 2.0);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start();
+                osc2.stop(now + 2.0);
+            } catch (e) { }
+        }
+
+        function playDepressed() {
+            try {
+                if ('speechSynthesis' in window) {
+                    const msg = new SpeechSynthesisUtterance("あーあ...");
+                    msg.lang = 'ja-JP';
+                    msg.pitch = 0.5;
+                    msg.rate = 0.7;
+                    window.speechSynthesis.speak(msg);
+                } else {
+                    initAudio();
+                    if (!audioCtx) return;
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(50, now + 1.5);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 1.5);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(now + 1.5);
+                }
+            } catch (e) { }
+        }
+
+        function animateNumber(element, start, end, duration, onComplete) {
+            let startTimestamp = null;
+            const diff = end - start;
+            if (diff === 0 && start !== 0) {
+                element.innerText = end;
+                if (onComplete) onComplete();
+                return;
+            }
+
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * diff + start);
+
+                if (element.innerText !== String(current)) {
+                    element.innerText = current;
+                    if (diff > 0) playTick(440 + (current % 81) * 10);
+                }
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    element.innerText = end;
+                    if (onComplete) onComplete();
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyv89MPyo1SDdaimgmednqDcUD6jQf4T-l9gFds9g6k3nX9fB7mgoI1uI4oC2eGEZ2O/exec";
 
         async function callGas(action, payload) {
@@ -529,7 +649,13 @@
                     }
                 });
 
-                displayElement.innerText = finalProduct;
+                const oldVal = isNaN(parseInt(displayElement.innerText)) ? 0 : parseInt(displayElement.innerText);
+                if (oldVal !== finalProduct) {
+                    animateNumber(displayElement, oldVal, finalProduct, 800, () => {
+                        if (finalProduct === 81) playShing();
+                        if (finalProduct === 1) playDepressed();
+                    });
+                }
                 displayElement.classList.add('calculated');
             } else {
                 displayElement.innerText = "-";
@@ -547,8 +673,13 @@
                 let score = Number(displayElement.innerText);
                 const sum_scoreElement = document.getElementById('sum_score' + player_number);
 
-                let sum_score = Number(score) + Number(sum_scoreElement.innerText);
-                sum_scoreElement.innerText = sum_score;
+                const oldSum = Number(sum_scoreElement.innerText) || 0;
+                const newSum = Number(score) + oldSum;
+
+                animateNumber(sum_scoreElement, oldSum, newSum, 600);
+
+                if (score === 81) playShing();
+                if (score === 1) playDepressed();
 
                 let result = [timestanp, selected_player, score, "合計:" + sum_score, "審査点:"].concat(currentScores);
 
@@ -698,6 +829,7 @@
         }
 
         function startTimer() {
+            initAudio();
             const btn = document.getElementById('timer_button');
             if (!TimerRunning) {
                 TimerRunning = true;
