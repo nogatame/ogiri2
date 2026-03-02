@@ -4,11 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='icon' href='laugher.png' type='image/png'>
+    <link rel="icon" href="favicon.png" type="image/png">
     <title>大喜利採点 システム</title>
     <!-- Add Google Fonts -->
-    <!-- Vercel Trigger 02 -->
-    <!-- Vercel Trigger 01 -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;700;900&display=swap"
         rel="stylesheet">
@@ -38,6 +36,128 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1515px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .header-panel {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+            margin-bottom: 0 !important;
+            max-width: none !important;
+        }
+
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #timer_display {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--danger-color);
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+            letter-spacing: 2px;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .judge-panel {
+            background-color: var(--surface-color);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            box-sizing: border-box;
+            border: 2px solid var(--border-color);
+            max-width: none !important;
+            margin-bottom: 0 !important;
+        }
+
+        .slides-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--accent-color);
+            position: relative;
+        }
+
+        .slides-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .slides-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .slides-container:hover .slides-controls {
+            opacity: 1;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 0 !important;
+            max-width: none !important;
         }
 
         button {
@@ -77,55 +197,6 @@
             background-color: rgba(239, 68, 68, 0.1);
         }
 
-        .header-panel {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--surface-color);
-            padding: 1rem 2rem;
-            border-radius: 16px;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            box-sizing: border-box;
-        }
-
-        .timer-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        #timer_display {
-            font-size: 48px;
-            font-weight: 900;
-            color: var(--danger-color);
-            font-variant-numeric: tabular-nums;
-            text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-            letter-spacing: 2px;
-        }
-
-        .controls-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .judge-panel {
-            background-color: var(--surface-color);
-            padding: 2rem;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 1000px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            margin-bottom: 2rem;
-            text-align: center;
-            position: relative;
-            box-sizing: border-box;
-        }
-
         #alarm {
             color: var(--warning-color);
             font-weight: bold;
@@ -156,8 +227,6 @@
             filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.6));
         }
 
-        /* Labels removed */
-
         .big-score {
             font-size: 8rem;
             font-weight: 900;
@@ -173,16 +242,6 @@
             text-shadow: 0 0 40px rgba(34, 197, 94, 0.3);
             transform: scale(1.05);
             transition: all 0.4s ease;
-        }
-
-        .players-grid {
-            display: grid;
-            grid-auto-flow: column;
-            grid-auto-columns: 1fr;
-            gap: 1.5rem;
-            width: 100%;
-            max-width: 1000px;
-            overflow-x: auto;
         }
 
         .player-card {
@@ -263,7 +322,6 @@
             margin-top: 1.5rem;
         }
 
-        /* Gauge Styles */
         .player-gauge {
             width: 100%;
             height: 120px;
@@ -300,154 +358,126 @@
         body[data-show-gauge="false"] .player-gauge {
             display: none;
         }
-
-        /* Slide Modal Styles */
-        #slidesModal {
-            width: 95vw;
-            height: 90vh;
-            max-width: 1400px;
-            padding: 0;
-            overflow: hidden;
-            background: #000;
-        }
-
-        #slidesModal iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        #slidesModal .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: #fff;
-            cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.2s;
-        }
-
-        #slidesModal .close-btn:hover {
-            background: var(--danger-color);
-            border-color: #fff;
-        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 
 <body>
-    <div class="header-panel">
-        <div class="timer-container">
-            <div id="timer_display">05:00</div>
-            <button id="timer_button" type="button" onclick="startTimer()">髢句ｧ・/button>
-        </div>
-        <div class="controls-group">
-            <button class="primary" type="button" onclick="openSlides()">繧ｹ繝ｩ繧､繝・/button>
-            <button class="danger" type="button" onclick="reset()">螳悟・繝ｪ繧ｻ繝・ヨ</button>
-            <button type="button" onclick="undo()">蜿悶ｊ豸医＠</button>
-            <button type="button" onclick="csv_register()">CSV蜃ｺ蜉・/button>
-            <button type="button" onclick="openNameModal()">蜷榊燕險ｭ螳・/button>
-            <button type="button" onclick="openSettings()">險ｭ螳・/button>
-            <button type="button" onclick="openExplain()">?</button>
-        </div>
-    </div>
+    <div class="main-layout">
+        <div class="left-column">
+            <div class="header-panel">
+                <div class="timer-container">
+                    <div id="timer_display">05:00</div>
+                    <button id="timer_button" class="primary" type="button" onclick="startTimer()">開始</button>
+                </div>
+            </div>
 
-    <div class="judge-panel">
-        <div id="alarm"></div>
-        <div class="judges-grid" id="pons_container">
-            <!-- Pon slots generated by JS based on judge count -->
-        </div>
-        <div id="display" class="big-score"></div>
-    </div>
+            <div class="judge-panel">
+                <div id="alarm"></div>
+                <div class="judges-grid" id="pons_container">
+                    <!-- Pon slots generated by JS -->
+                </div>
+                <div id="display" class="big-score"></div>
+            </div>
 
-    <div class="players-grid" id="main_player_container">
-        <!-- Player cards fully rendered by JS to handle dynamically -->
+            <div class="players-grid" id="main_player_container">
+                <!-- Player cards -->
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="slides-container">
+                <iframe id="slidesIframe" src="slides.html"></iframe>
+                <div class="slides-controls">
+                    <button type="button" onclick="prevSlide()">前へ</button>
+                    <button type="button" onclick="nextSlide()">次へ</button>
+                </div>
+            </div>
+
+            <div class="header-panel" style="flex-direction: column; align-items: stretch; gap: 15px;">
+                <div class="controls-group" style="justify-content: center;">
+                    <button class="danger" type="button" onclick="reset()">完全リセット</button>
+                    <button type="button" onclick="undo()">取り消し</button>
+                    <button type="button" onclick="csv_register()">CSV出力</button>
+                </div>
+                <div class="controls-group" style="justify-content: center;">
+                    <button type="button" onclick="openNameModal()">名前設定</button>
+                    <button type="button" onclick="openSettings()">設定</button>
+                    <button type="button" onclick="openExplain()">?</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modals -->
     <dialog id="settingsModal">
-        <h3>繧ｷ繧ｹ繝・Β險ｭ螳・/h3>
+        <h3>システム設定</h3>
         <label>
-            繝励Ξ繧､繝､繝ｼ莠ｺ謨ｰ (1縲・):
+            プレイヤー人数 (1〜6):
             <select id="player_count_select" onchange="changePlayerCount()">
-                <option value="1">1莠ｺ</option>
-                <option value="2">2莠ｺ</option>
-                <option value="3">3莠ｺ</option>
-                <option value="4">4莠ｺ</option>
-                <option value="5">5莠ｺ</option>
-                <option value="6" selected>6莠ｺ</option>
+                <option value="1">1人</option>
+                <option value="2">2人</option>
+                <option value="3">3人</option>
+                <option value="4">4人</option>
+                <option value="5">5人</option>
+                <option value="6" selected>6人</option>
             </select>
         </label>
         <label>
-            蟇ｩ譟ｻ蜩｡莠ｺ謨ｰ (4縲・):
+            審査員人数 (4〜6):
             <select id="judge_count_select" onchange="changeJudgeCount()">
-                <option value="4" selected>4莠ｺ</option>
-                <option value="5">5莠ｺ</option>
-                <option value="6">6莠ｺ</option>
+                <option value="4" selected>4人</option>
+                <option value="5">5人</option>
+                <option value="6">6人</option>
             </select>
         </label>
         <label>
-            蛻ｶ髯先凾髢・(1縲・蛻・:
+            制限時間 (1〜6分):
             <select id="timer_count_select" onchange="changeTimerCount()">
-                <option value="1">1蛻・/option>
-                <option value="2">2蛻・/option>
-                <option value="3">3蛻・/option>
-                <option value="4">4蛻・/option>
-                <option value="5" selected>5蛻・/option>
-                <option value="6">6蛻・/option>
+                <option value="1">1分</option>
+                <option value="2">2分</option>
+                <option value="3">3分</option>
+                <option value="4">4分</option>
+                <option value="5" selected>5分</option>
+                <option value="6">6分</option>
             </select>
         </label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-            1轤ｹ繝ｻ81轤ｹ譎ゅ・蜉ｹ譫憺浹:
+            1点・81点時の効果音:
             <input type="checkbox" id="sound_effect_toggle" checked onchange="toggleSounds()"
                 style="width: auto; margin: 0;">
         </label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
-            繧ｹ繧ｳ繧｢繧ｲ繝ｼ繧ｸ縺ｮ陦ｨ遉ｺ:
+            スコアゲージの表示:
             <input type="checkbox" id="gauge_toggle" checked onchange="toggleGauge()" style="width: auto; margin: 0;">
         </label>
         <div class="dialog-actions">
-            <button class="primary" onclick="closeSettings()">螳御ｺ・/button>
+            <button class="primary" onclick="closeSettings()">完了</button>
         </div>
     </dialog>
 
     <dialog id="nameModal">
-        <h3>繝励Ξ繧､繝､繝ｼ蜷崎ｨｭ螳・/h3>
+        <h3>プレイヤー名設定</h3>
         <div id="modal_player_container" style="display: flex; flex-direction: column; gap: 10px;">
             <!-- Generated by JS -->
         </div>
         <div class="dialog-actions">
-            <button onclick="closeNameModal()">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
-            <button class="primary" onclick="selectName()">菫晏ｭ・/button>
+            <button onclick="closeNameModal()">キャンセル</button>
+            <button class="primary" onclick="selectName()">保存</button>
         </div>
     </dialog>
 
     <dialog id="explain">
-        <h3>菴ｿ縺・婿隱ｬ譏・/h3>
-        <p>1. 蜷・ｯｩ譟ｻ蜩｡縺梧焔蜈・・遶ｯ譛ｫ縺ｧ縲茎hared_value1縲・縲阪↓繧ｹ繧ｳ繧｢繧貞・蜉帙・br>
-            2. 險ｭ螳壹＠縺溷ｯｩ譟ｻ蜩｡莠ｺ謨ｰ縺ｮ繧ｹ繧ｳ繧｢縺梧純縺・→縲∽ｸｭ螟ｮ縺ｮ繧ｹ繧ｳ繧｢縺瑚・蜍戊ｨ育ｮ励＆繧後※遒ｺ螳壹＠縺ｾ縺吶・br>
-            <small style="color:var(--text-secondary);">(窶ｻ5莠ｺ縺ｮ蝣ｴ蜷医・蟷ｳ蝮・°繧画怙繧る□縺・縺､繧帝勁螟悶・莠ｺ縺ｮ蝣ｴ蜷医・2縺､繧帝勁螟悶＠縺ｦ荵礼ｮ励＆繧後∪縺・</small><br>
-            3. 隧ｲ蠖薙・繝励Ξ繧､繝､繝ｼ縺ｮ縲檎匳骭ｲ縲阪・繧ｿ繝ｳ繧呈款縺励※蠕礼せ繧貞刈邂励＠縺ｾ縺吶・br>
-            4. 縲靴SV蜃ｺ蜉帙阪〒Google繧ｹ繝励Ξ繝・ラ繧ｷ繝ｼ繝医↓險倬鹸蜿ｯ閭ｽ縺ｧ縺吶・
+        <h3>使い方説明</h3>
+        <p>1. 各審査員が手元の端末でスコアを入力。<br>
+            2. スコアが揃うと、中央の点数が自動計算されます。<br>
+            3. 右上のエリアでお題を「スライド」表示できます。<br>
+            4. 「登録」ボタンでプレイヤーに点数を加算します。
         </p>
         <div class="dialog-actions">
-            <button class="primary" onclick="closeExplain()">髢峨§繧・/button>
+            <button class="primary" onclick="closeExplain()">閉じる</button>
         </div>
-    </dialog>
-
-    <dialog id="slidesModal">
-        <div class="close-btn" onclick="closeSlides()">ﾃ・/div>
-        <iframe id="slidesIframe" src=""></iframe>
     </dialog>
 
     <script>
@@ -489,7 +519,6 @@
                 initAudio();
                 if (!audioCtx) return;
                 const now = audioCtx.currentTime;
-                // Sharp attack
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'triangle';
@@ -502,7 +531,6 @@
                 osc.start();
                 osc.stop(now + 1.2);
 
-                // Crystal resonance
                 const osc2 = audioCtx.createOscillator();
                 osc2.type = 'sine';
                 osc2.frequency.setValueAtTime(1760, now);
@@ -519,7 +547,7 @@
         function playDepressed() {
             try {
                 if ('speechSynthesis' in window) {
-                    const msg = new SpeechSynthesisUtterance("縺ゅ・縺・..");
+                    const msg = new SpeechSynthesisUtterance("あーあ...");
                     msg.lang = 'ja-JP';
                     msg.pitch = 0.5;
                     msg.rate = 0.7;
@@ -533,7 +561,7 @@
                     osc.frequency.setValueAtTime(150, now);
                     osc.frequency.linearRampToValueAtTime(50, now + 1.5);
                     gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.linearRampToValueAtTime(0, now + 1.5);
+                    gain.linearRampToValueAtTime(0, now + 1.5);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
                     osc.start();
@@ -616,7 +644,7 @@
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyv89MPyo1SDdaimgmednqDcUD6jQf4T-l9gFds9g6k3nX9fB7mgoI1uI4oC2eGEZ2O/exec";
 
         async function callGas(action, payload) {
-            if (GAS_WEBAPP_URL.includes("縺薙％縺ｫGAS縺ｧ繝・・繝ｭ繧､縺励◆")) return { success: false, error: "GAS_WEBAPP_URL is not set" };
+            if (GAS_WEBAPP_URL.includes("ここにGASでデプロイした")) return { success: false, error: "GAS_WEBAPP_URL is not set" };
             try {
                 const response = await fetch(GAS_WEBAPP_URL, {
                     method: 'POST',
@@ -646,12 +674,10 @@
         let enableSpecialSounds = localStorage.getItem('enableSpecialSounds') !== 'false';
         let showGauge = localStorage.getItem('showGauge') !== 'false';
 
-        // Settings configuration
         let maxJudgesSystem = 6;
         let judgeCount = 4;
         let data = ["", "", "", "", "", ""];
 
-        // Persistence keys
         const STORAGE_KEY = 'ogiri_system_data';
 
         function saveState() {
@@ -692,7 +718,6 @@
         let displayElement = document.getElementById('display');
         let alarmElement = document.getElementById('alarm');
 
-        // Dynamic Initialization functions
         function renderPons() {
             const container = document.getElementById('pons_container');
             container.innerHTML = '';
@@ -700,7 +725,7 @@
                 const box = document.createElement('div');
                 box.className = 'pon-box';
                 box.id = 'pon' + i;
-                box.innerHTML = '<span style="color: var(--surface-hover);">笳・/span>';
+                box.innerHTML = '<span style="color: var(--surface-hover);">●</span>';
                 container.appendChild(box);
             }
         }
@@ -713,13 +738,10 @@
             let currentNames = saved ? saved.playerNames : [];
             let currentScores = saved ? saved.playerScores : [];
 
-            // If no saved data or incomplete, fallback to DOM or defaults
             if (currentNames.length === 0) {
                 for (let i = 1; i <= 6; i++) {
-                    let nameEl = document.getElementById('player_name' + i);
-                    let scoreEl = document.getElementById('sum_score' + i);
-                    currentNames.push(nameEl ? nameEl.innerText : "----");
-                    currentScores.push(scoreEl ? scoreEl.innerText : "0");
+                    currentNames.push("----");
+                    currentScores.push("0");
                 }
             }
 
@@ -727,7 +749,6 @@
             modalContainer.innerHTML = '';
 
             for (let i = 1; i <= maxPlayers; i++) {
-                // Main UI
                 const pcard = document.createElement('div');
                 pcard.className = 'player-card';
                 const scoreVal = Number(currentScores[i - 1]) || 0;
@@ -739,17 +760,16 @@
                         <div class="player-sum" id="sum_score${i}">${scoreVal}</div>
                         <div class="player-name" id="player_name${i}">${currentNames[i - 1]}</div>
                     </div>
-                    <button class="primary" type="button" onclick="point_register(${i})">逋ｻ骭ｲ</button>
+                    <button class="primary" type="button" onclick="point_register(${i})">登録</button>
                 `;
                 playerContainer.appendChild(pcard);
 
-                // Modal UI
                 const mbox = document.createElement('label');
                 mbox.style.display = 'flex';
                 mbox.style.justifyContent = 'space-between';
                 mbox.style.alignItems = 'center';
                 mbox.innerHTML = `
-                    繝励Ξ繧､繝､繝ｼ${i}:
+                    プレイヤー${i}:
                     <select id="player_select${i}" style="width: 70%; margin-bottom: 0;">
                         <option value="----">----</option>
                         <option value="a">a</option>
@@ -798,10 +818,10 @@
                     if (ponElement.getAttribute('data-status') !== 'done') {
                         playPon();
                     }
-                    ponElement.innerHTML = '<span style="color: var(--success-color);">笳・/span>';
+                    ponElement.innerHTML = '<span style="color: var(--success-color);">●</span>';
                     ponElement.setAttribute('data-status', 'done');
                 } else {
-                    ponElement.innerHTML = '<span style="color: var(--surface-hover);">笳・/span>';
+                    ponElement.innerHTML = '<span style="color: var(--surface-hover);">●</span>';
                     ponElement.removeAttribute('data-status');
                 }
             }
@@ -810,13 +830,12 @@
         const calculateAndShow = () => {
             let currentScores = data.slice(0, judgeCount);
             if (currentScores.every(val => val !== "" && val !== null && val !== undefined)) {
-                // All required judges have inputted
                 const validScores = currentScores.map((s, i) => ({ value: Number(s), index: i }));
                 const sum = validScores.reduce((a, b) => a + b.value, 0);
 
                 let excludedIndices = [];
                 if (judgeCount > 4) {
-                    const excludeCount = judgeCount - 4; // 5 -> 1 exclude, 6 -> 2 excludes
+                    const excludeCount = judgeCount - 4;
                     const withDistances = validScores.map(s => ({
                         ...s,
                         distInt: Math.abs(s.value * judgeCount - sum)
@@ -866,7 +885,6 @@
                 const oldSum = Number(sum_scoreElement.innerText) || 0;
                 const newSum = Number(score) + oldSum;
 
-                // 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ螳御ｺ・ｾ後↓迥ｶ諷九ｒ菫晏ｭ倥☆繧九ｈ縺・↓螟画峩
                 animateNumber(sum_scoreElement, oldSum, newSum, 600, () => {
                     saveState();
                 });
@@ -876,17 +894,15 @@
                     liquid.style.height = Math.min(100, (newSum / 300) * 100) + "%";
                 }
 
-                let result = [timestamp, selected_player, score, "蜷郁ｨ・" + newSum, "蟇ｩ譟ｻ轤ｹ:"].concat(currentScores);
-
+                let result = [timestamp, selected_player, score, "合計:" + newSum, "審査点:"].concat(currentScores);
                 callGas("saveData", result);
 
                 lastAction.playerNum = player_number;
                 lastAction.score = score;
-
                 resetCurrentRound();
             } else {
                 playBuzz();
-                alarmElement.innerText = "謗｡轤ｹ縺檎ｵゅｏ縺｣縺ｦ縺・∪縺帙ｓ";
+                alarmElement.innerText = "採点が終わっていません";
                 setTimeout(() => { alarmElement.innerText = ""; }, 2000);
             }
         }
@@ -911,10 +927,10 @@
             } else {
                 if (lastAction.playerNum === null) {
                     playBuzz();
-                    alert("蜿悶ｊ豸医○繧区桃菴懊′縺ゅｊ縺ｾ縺帙ｓ縲・);
+                    alert("取り消せる操作がありません。");
                     return;
                 }
-                if (confirm("逶ｴ蜑阪・蠕礼せ逋ｻ骭ｲ繧貞叙繧頑ｶ医＠縺ｾ縺吶°・・)) {
+                if (confirm("直前の得点登録を取り消しますか？")) {
                     const targetScoreElement = document.getElementById('sum_score' + lastAction.playerNum);
                     let currentSum = Number(targetScoreElement.innerText);
                     const newSum = currentSum - lastAction.score;
@@ -926,18 +942,17 @@
                     }
 
                     callGas("undoLastRow", null);
-
                     lastAction.playerNum = null;
                     lastAction.score = 0;
                     saveState();
-                    alert("蜿悶ｊ豸医＠縺ｾ縺励◆縲・);
+                    alert("取り消しました。");
                 }
             }
-            callGas("saveData", ["undo縺励∪縺励◆"]);
+            callGas("saveData", ["undoしました"]);
         }
 
         function reset() {
-            if (confirm("蜈ｨ縺ｦ縺ｮ繧ｹ繧ｳ繧｢繧呈悽蠖薙↓0縺ｫ繝ｪ繧ｻ繝・ヨ縺励∪縺吶°・・)) {
+            if (confirm("全てのスコアを本当に0にリセットしますか？")) {
                 let playername_csv = [];
                 let score_csv = [];
                 for (let i = 1; i <= maxPlayers; i++) {
@@ -955,22 +970,19 @@
                 }
                 lastAction = { playerNum: null, score: 0 };
 
-                // 繧ｿ繧､繝槭・縺ｮ繝ｪ繧ｻ繝・ヨ
                 clearInterval(TimerInterval);
                 TimerRunning = false;
                 timeLeft = defaultTimerMinutes * 60;
                 document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
                 const btn = document.getElementById('timer_button');
                 if (btn) {
-                    btn.innerText = "髢句ｧ・;
+                    btn.innerText = "開始";
                     btn.className = "primary";
                 }
                 localStorage.removeItem(STORAGE_KEY);
-                // 蠢・ｦ∵怙菴朱剞縺ｮ蜀堺ｿ晏ｭ假ｼ郁ｨｭ螳壼､縺ｮ縺ｿ菫晄戟縺励◆縺・ｴ蜷医・縺薙％縺ｧ隱ｿ謨ｴ蜿ｯ閭ｽ縲ゆｻ雁屓縺ｯ螳悟・縺ｫ豸医☆・・
             }
         }
 
-        // --- Modals and Actions ---
         const settingsModal = document.getElementById('settingsModal');
         const nameModal = document.getElementById('nameModal');
         const explain = document.getElementById('explain');
@@ -996,13 +1008,12 @@
         function changeJudgeCount() {
             const newJudgeCount = parseInt(document.getElementById('judge_count_select').value, 10);
             if (newJudgeCount !== judgeCount) {
-                if (confirm("蟇ｩ譟ｻ蜩｡莠ｺ謨ｰ繧貞､画峩縺励∪縺吶ら樟蝨ｨ縺ｮ蜈･蜉幃比ｸｭ縺ｮ繧ｹ繧ｳ繧｢縺ｯ繝ｪ繧ｻ繝・ヨ縺輔ｌ縺ｾ縺吶′繧医ｍ縺励＞縺ｧ縺吶°・・)) {
+                if (confirm("審査員人数を変更します。現在の入力途中のスコアはリセットされますがよろしいですか？")) {
                     judgeCount = newJudgeCount;
                     saveState();
                     renderPons();
                     resetCurrentRound();
                 } else {
-                    // revert select
                     document.getElementById('judge_count_select').value = judgeCount;
                 }
             }
@@ -1036,18 +1047,13 @@
         function openExplain() { explain.showModal(); }
         function closeExplain() { explain.close(); }
 
-        const slidesModal = document.getElementById('slidesModal');
         const slidesIframe = document.getElementById('slidesIframe');
-
-        function openSlides() {
-            slidesIframe.src = 'slides.html';
-            slidesModal.showModal();
-        }
-
-        function closeSlides() {
-            slidesModal.close();
-            slidesIframe.src = '';
-        }
+        function nextSlide() { slidesIframe?.contentWindow?.postMessage(JSON.stringify({method: 'next'}), '*'); }
+        function prevSlide() { slidesIframe?.contentWindow?.postMessage(JSON.stringify({method: 'prev'}), '*'); }
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
 
         async function csv_register() {
             let playername_csv = [];
@@ -1059,9 +1065,9 @@
             try {
                 const response = await callGas("saveCsv", [playername_csv, score_csv]);
                 if (response && response.success) {
-                    alert("CSV繝・・繧ｿ繧貞・蜉帙＠縺ｾ縺励◆・医せ繝励Ξ繝・ラ繧ｷ繝ｼ繝医↓菫晏ｭ倥＆繧後∪縺励◆・・);
+                    alert("CSVデータを出力しました（スプレッドシートに保存されました）");
                 } else {
-                    alert("菫晏ｭ倥↓螟ｱ謨励＠縺ｾ縺励◆");
+                    alert("保存に失敗しました");
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -1073,7 +1079,7 @@
             const btn = document.getElementById('timer_button');
             if (!TimerRunning) {
                 TimerRunning = true;
-                btn.innerText = "蛛懈ｭ｢";
+                btn.innerText = "停止";
                 btn.className = "danger";
                 TimerInterval = setInterval(() => {
                     timeLeft--;
@@ -1084,25 +1090,22 @@
                     if (timeLeft <= 0) {
                         clearInterval(TimerInterval);
                         TimerRunning = false;
-                        btn.innerText = "髢句ｧ・;
+                        btn.innerText = "開始";
                         btn.className = "primary";
                     }
                 }, 1000);
             } else {
                 TimerRunning = false;
                 clearInterval(TimerInterval);
-                btn.innerText = "髢句ｧ・;
+                btn.innerText = "開始";
                 btn.className = "primary";
             }
         }
 
-        // --- Start ---
-        // UI繧剃ｿ晏ｭ倥＆繧後◆險ｭ螳壹↓蜷医ｏ縺帙ｋ
         document.getElementById('player_count_select').value = maxPlayers;
         document.getElementById('judge_count_select').value = judgeCount;
         document.getElementById('timer_count_select').value = defaultTimerMinutes;
         document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
-
         document.getElementById('sound_effect_toggle').checked = enableSpecialSounds;
         document.getElementById('gauge_toggle').checked = showGauge;
         document.body.setAttribute('data-show-gauge', showGauge);
@@ -1112,5 +1115,4 @@
     </script>
 </body>
 
-</html>T e s t   f i l e   c h a n g e   d e t e c t i o n  
- 
+</html>
