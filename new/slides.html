@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>大喜利採点システム プレゼンテーション</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+
+    <style>
+        :root {
+            --r-main-font: 'Inter', 'Noto Sans JP', sans-serif;
+            --r-heading-font: 'Inter', 'Noto Sans JP', sans-serif;
+            --r-background-color: #0f172a;
+        }
+
+        .reveal .slides section {
+            text-align: left;
+        }
+
+        .reveal h1,
+        .reveal h2,
+        .reveal h3 {
+            text-transform: none;
+            color: #38bdf8;
+        }
+
+        .accent {
+            color: #8b5cf6;
+        }
+
+        .highlight {
+            background: rgba(56, 189, 248, 0.2);
+            padding: 0 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section data-background-gradient="linear-gradient(to bottom, #0f172a, #1e293b)">
+                <h1 style="text-align: center;">大喜利採点システム</h1>
+                <p style="text-align: center; color: #94a3b8;">Presentation Slides Template</p>
+                <div style="text-align: center; margin-top: 50px;">
+                    <small>スペースキーまたは矢印キーで進みます</small>
+                </div>
+            </section>
+
+            <section>
+                <h2>システムの概要</h2>
+                <ul>
+                    <li>リアルタイムなスコアリング</li>
+                    <li>Firebaseによる審査員連携</li>
+                    <li>自動計算・集計機能</li>
+                    <li>CSVエクスポート対応</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>採点ルール</h2>
+                <p>審査員が4〜6人の場合：</p>
+                <blockquote style="font-size: 0.8em; border-left: 5px solid #38bdf8;">
+                    5人の場合は平均から最も遠い1つを除外、<br>
+                    6人の場合は2つを除外して<span class="accent">乗算</span>されます。
+                </blockquote>
+                <p><small>※公平性を保つための独自のアルゴリズムです。</small></p>
+            </section>
+
+            <section data-background-color="#1e293b">
+                <h3 style="text-align: center;">デモ動画や画像も挿入可能</h3>
+                <div style="display: flex; justify-content: center;">
+                    <div
+                        style="width: 300px; height: 180px; background: #334155; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: #64748b;">Image Placeholder</span>
+                    </div>
+                </div>
+            </section>
+
+            <section style="text-align: center;">
+                <h2>ご清聴ありがとうございました</h2>
+                <p class="accent">さあ、大喜利を始めましょう！</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+    </script>
+</body>
+
+</html>

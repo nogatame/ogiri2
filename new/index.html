@@ -299,6 +299,46 @@
         body[data-show-gauge="false"] .player-gauge {
             display: none;
         }
+
+        /* Slide Modal Styles */
+        #slidesModal {
+            width: 95vw;
+            height: 90vh;
+            max-width: 1400px;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #slidesModal iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        #slidesModal .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+        }
+
+        #slidesModal .close-btn:hover {
+            background: var(--danger-color);
+            border-color: #fff;
+        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -311,6 +351,7 @@
             <button id="timer_button" type="button" onclick="startTimer()">開始</button>
         </div>
         <div class="controls-group">
+            <button class="primary" type="button" onclick="openSlides()">スライド</button>
             <button class="danger" type="button" onclick="reset()">完全リセット</button>
             <button type="button" onclick="undo()">取り消し</button>
             <button type="button" onclick="csv_register()">CSV出力</button>
@@ -401,6 +442,11 @@
         <div class="dialog-actions">
             <button class="primary" onclick="closeExplain()">閉じる</button>
         </div>
+    </dialog>
+
+    <dialog id="slidesModal">
+        <div class="close-btn" onclick="closeSlides()">×</div>
+        <iframe id="slidesIframe" src=""></iframe>
     </dialog>
 
     <script>
@@ -989,6 +1035,19 @@
         function openExplain() { explain.showModal(); }
         function closeExplain() { explain.close(); }
 
+        const slidesModal = document.getElementById('slidesModal');
+        const slidesIframe = document.getElementById('slidesIframe');
+
+        function openSlides() {
+            slidesIframe.src = 'slides.html';
+            slidesModal.showModal();
+        }
+
+        function closeSlides() {
+            slidesModal.close();
+            slidesIframe.src = '';
+        }
+
         async function csv_register() {
             let playername_csv = [];
             let score_csv = [];
@@ -1052,4 +1111,5 @@
     </script>
 </body>
 
-</html>
+</html>T e s t   f i l e   c h a n g e   d e t e c t i o n  
+ 
