@@ -131,26 +131,6 @@
             border: none;
         }
 
-        .slides-controls {
-            position: absolute;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 8px 20px;
-            border-radius: 25px;
-            backdrop-filter: blur(5px);
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .slides-container:hover .slides-controls {
-            opacity: 1;
-        }
-
         .players-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -388,11 +368,9 @@
 
         <div class="right-column">
             <div class="slides-container">
-                <iframe id="slidesIframe" src="slides.html"></iframe>
-                <div class="slides-controls">
-                    <button type="button" onclick="prevSlide()">前へ</button>
-                    <button type="button" onclick="nextSlide()">次へ</button>
-                </div>
+                <iframe id="slidesIframe"
+                    src="https://onedrive.live.com/embed?resid=01FBFC780D0BA3CC&authkey=IQBMPiVKJtc0QYQXSdW32u-gASrT-B0LpjxWR6R4kzMY5g4&em=2"
+                    allowfullscreen></iframe>
             </div>
 
             <div class="header-panel" style="flex-direction: column; align-items: stretch; gap: 15px;">
@@ -1046,14 +1024,6 @@
 
         function openExplain() { explain.showModal(); }
         function closeExplain() { explain.close(); }
-
-        const slidesIframe = document.getElementById('slidesIframe');
-        function nextSlide() { slidesIframe?.contentWindow?.postMessage(JSON.stringify({method: 'next'}), '*'); }
-        function prevSlide() { slidesIframe?.contentWindow?.postMessage(JSON.stringify({method: 'prev'}), '*'); }
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') nextSlide();
-            if (e.key === 'ArrowLeft') prevSlide();
-        });
 
         async function csv_register() {
             let playername_csv = [];
