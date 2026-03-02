@@ -106,10 +106,20 @@
             controls: true,
             progress: true,
             center: true,
-            transition: 'slide', // none/fade/slide/convex/concave/zoom
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+            // Parent communication
+            postMessage: true,
+            postMessageEvents: true
+        });
 
-            // Learn about plugins: https://revealjs.com/plugins/
-            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        // Handle messages from parent window
+        window.addEventListener('message', (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.method === 'next') Reveal.next();
+                if (data.method === 'prev') Reveal.prev();
+            } catch (e) { }
         });
     </script>
 </body>
