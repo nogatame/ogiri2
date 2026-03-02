@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ja">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大喜利採点 システム</title>
+    <link rel="icon" href="favicon.png" type="image/png">`n    <title>螟ｧ蝟懷茜謗｡轤ｹ 繧ｷ繧ｹ繝・Β</title>
     <!-- Add Google Fonts -->
     <!-- Vercel Trigger 02 -->
     <!-- Vercel Trigger 01 -->
@@ -348,15 +348,15 @@
     <div class="header-panel">
         <div class="timer-container">
             <div id="timer_display">05:00</div>
-            <button id="timer_button" type="button" onclick="startTimer()">開始</button>
+            <button id="timer_button" type="button" onclick="startTimer()">髢句ｧ・/button>
         </div>
         <div class="controls-group">
-            <button class="primary" type="button" onclick="openSlides()">スライド</button>
-            <button class="danger" type="button" onclick="reset()">完全リセット</button>
-            <button type="button" onclick="undo()">取り消し</button>
-            <button type="button" onclick="csv_register()">CSV出力</button>
-            <button type="button" onclick="openNameModal()">名前設定</button>
-            <button type="button" onclick="openSettings()">設定</button>
+            <button class="primary" type="button" onclick="openSlides()">繧ｹ繝ｩ繧､繝・/button>
+            <button class="danger" type="button" onclick="reset()">螳悟・繝ｪ繧ｻ繝・ヨ</button>
+            <button type="button" onclick="undo()">蜿悶ｊ豸医＠</button>
+            <button type="button" onclick="csv_register()">CSV蜃ｺ蜉・/button>
+            <button type="button" onclick="openNameModal()">蜷榊燕險ｭ螳・/button>
+            <button type="button" onclick="openSettings()">險ｭ螳・/button>
             <button type="button" onclick="openExplain()">?</button>
         </div>
     </div>
@@ -375,77 +375,77 @@
 
     <!-- Modals -->
     <dialog id="settingsModal">
-        <h3>システム設定</h3>
+        <h3>繧ｷ繧ｹ繝・Β險ｭ螳・/h3>
         <label>
-            プレイヤー人数 (1〜6):
+            繝励Ξ繧､繝､繝ｼ莠ｺ謨ｰ (1縲・):
             <select id="player_count_select" onchange="changePlayerCount()">
-                <option value="1">1人</option>
-                <option value="2">2人</option>
-                <option value="3">3人</option>
-                <option value="4">4人</option>
-                <option value="5">5人</option>
-                <option value="6" selected>6人</option>
+                <option value="1">1莠ｺ</option>
+                <option value="2">2莠ｺ</option>
+                <option value="3">3莠ｺ</option>
+                <option value="4">4莠ｺ</option>
+                <option value="5">5莠ｺ</option>
+                <option value="6" selected>6莠ｺ</option>
             </select>
         </label>
         <label>
-            審査員人数 (4〜6):
+            蟇ｩ譟ｻ蜩｡莠ｺ謨ｰ (4縲・):
             <select id="judge_count_select" onchange="changeJudgeCount()">
-                <option value="4" selected>4人</option>
-                <option value="5">5人</option>
-                <option value="6">6人</option>
+                <option value="4" selected>4莠ｺ</option>
+                <option value="5">5莠ｺ</option>
+                <option value="6">6莠ｺ</option>
             </select>
         </label>
         <label>
-            制限時間 (1〜6分):
+            蛻ｶ髯先凾髢・(1縲・蛻・:
             <select id="timer_count_select" onchange="changeTimerCount()">
-                <option value="1">1分</option>
-                <option value="2">2分</option>
-                <option value="3">3分</option>
-                <option value="4">4分</option>
-                <option value="5" selected>5分</option>
-                <option value="6">6分</option>
+                <option value="1">1蛻・/option>
+                <option value="2">2蛻・/option>
+                <option value="3">3蛻・/option>
+                <option value="4">4蛻・/option>
+                <option value="5" selected>5蛻・/option>
+                <option value="6">6蛻・/option>
             </select>
         </label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-            1点・81点時の効果音:
+            1轤ｹ繝ｻ81轤ｹ譎ゅ・蜉ｹ譫憺浹:
             <input type="checkbox" id="sound_effect_toggle" checked onchange="toggleSounds()"
                 style="width: auto; margin: 0;">
         </label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
-            スコアゲージの表示:
+            繧ｹ繧ｳ繧｢繧ｲ繝ｼ繧ｸ縺ｮ陦ｨ遉ｺ:
             <input type="checkbox" id="gauge_toggle" checked onchange="toggleGauge()" style="width: auto; margin: 0;">
         </label>
         <div class="dialog-actions">
-            <button class="primary" onclick="closeSettings()">完了</button>
+            <button class="primary" onclick="closeSettings()">螳御ｺ・/button>
         </div>
     </dialog>
 
     <dialog id="nameModal">
-        <h3>プレイヤー名設定</h3>
+        <h3>繝励Ξ繧､繝､繝ｼ蜷崎ｨｭ螳・/h3>
         <div id="modal_player_container" style="display: flex; flex-direction: column; gap: 10px;">
             <!-- Generated by JS -->
         </div>
         <div class="dialog-actions">
-            <button onclick="closeNameModal()">キャンセル</button>
-            <button class="primary" onclick="selectName()">保存</button>
+            <button onclick="closeNameModal()">繧ｭ繝｣繝ｳ繧ｻ繝ｫ</button>
+            <button class="primary" onclick="selectName()">菫晏ｭ・/button>
         </div>
     </dialog>
 
     <dialog id="explain">
-        <h3>使い方説明</h3>
-        <p>1. 各審査員が手元の端末で「shared_value1〜6」にスコアを入力。<br>
-            2. 設定した審査員人数のスコアが揃うと、中央のスコアが自動計算されて確定します。<br>
-            <small style="color:var(--text-secondary);">(※5人の場合は平均から最も遠い1つを除外、6人の場合は2つを除外して乗算されます)</small><br>
-            3. 該当のプレイヤーの「登録」ボタンを押して得点を加算します。<br>
-            4. 「CSV出力」でGoogleスプレッドシートに記録可能です。
+        <h3>菴ｿ縺・婿隱ｬ譏・/h3>
+        <p>1. 蜷・ｯｩ譟ｻ蜩｡縺梧焔蜈・・遶ｯ譛ｫ縺ｧ縲茎hared_value1縲・縲阪↓繧ｹ繧ｳ繧｢繧貞・蜉帙・br>
+            2. 險ｭ螳壹＠縺溷ｯｩ譟ｻ蜩｡莠ｺ謨ｰ縺ｮ繧ｹ繧ｳ繧｢縺梧純縺・→縲∽ｸｭ螟ｮ縺ｮ繧ｹ繧ｳ繧｢縺瑚・蜍戊ｨ育ｮ励＆繧後※遒ｺ螳壹＠縺ｾ縺吶・br>
+            <small style="color:var(--text-secondary);">(窶ｻ5莠ｺ縺ｮ蝣ｴ蜷医・蟷ｳ蝮・°繧画怙繧る□縺・縺､繧帝勁螟悶・莠ｺ縺ｮ蝣ｴ蜷医・2縺､繧帝勁螟悶＠縺ｦ荵礼ｮ励＆繧後∪縺・</small><br>
+            3. 隧ｲ蠖薙・繝励Ξ繧､繝､繝ｼ縺ｮ縲檎匳骭ｲ縲阪・繧ｿ繝ｳ繧呈款縺励※蠕礼せ繧貞刈邂励＠縺ｾ縺吶・br>
+            4. 縲靴SV蜃ｺ蜉帙阪〒Google繧ｹ繝励Ξ繝・ラ繧ｷ繝ｼ繝医↓險倬鹸蜿ｯ閭ｽ縺ｧ縺吶・
         </p>
         <div class="dialog-actions">
-            <button class="primary" onclick="closeExplain()">閉じる</button>
+            <button class="primary" onclick="closeExplain()">髢峨§繧・/button>
         </div>
     </dialog>
 
     <dialog id="slidesModal">
-        <div class="close-btn" onclick="closeSlides()">×</div>
+        <div class="close-btn" onclick="closeSlides()">ﾃ・/div>
         <iframe id="slidesIframe" src=""></iframe>
     </dialog>
 
@@ -518,7 +518,7 @@
         function playDepressed() {
             try {
                 if ('speechSynthesis' in window) {
-                    const msg = new SpeechSynthesisUtterance("あーあ...");
+                    const msg = new SpeechSynthesisUtterance("縺ゅ・縺・..");
                     msg.lang = 'ja-JP';
                     msg.pitch = 0.5;
                     msg.rate = 0.7;
@@ -615,7 +615,7 @@
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyv89MPyo1SDdaimgmednqDcUD6jQf4T-l9gFds9g6k3nX9fB7mgoI1uI4oC2eGEZ2O/exec";
 
         async function callGas(action, payload) {
-            if (GAS_WEBAPP_URL.includes("ここにGASでデプロイした")) return { success: false, error: "GAS_WEBAPP_URL is not set" };
+            if (GAS_WEBAPP_URL.includes("縺薙％縺ｫGAS縺ｧ繝・・繝ｭ繧､縺励◆")) return { success: false, error: "GAS_WEBAPP_URL is not set" };
             try {
                 const response = await fetch(GAS_WEBAPP_URL, {
                     method: 'POST',
@@ -699,7 +699,7 @@
                 const box = document.createElement('div');
                 box.className = 'pon-box';
                 box.id = 'pon' + i;
-                box.innerHTML = '<span style="color: var(--surface-hover);">●</span>';
+                box.innerHTML = '<span style="color: var(--surface-hover);">笳・/span>';
                 container.appendChild(box);
             }
         }
@@ -738,7 +738,7 @@
                         <div class="player-sum" id="sum_score${i}">${scoreVal}</div>
                         <div class="player-name" id="player_name${i}">${currentNames[i - 1]}</div>
                     </div>
-                    <button class="primary" type="button" onclick="point_register(${i})">登録</button>
+                    <button class="primary" type="button" onclick="point_register(${i})">逋ｻ骭ｲ</button>
                 `;
                 playerContainer.appendChild(pcard);
 
@@ -748,7 +748,7 @@
                 mbox.style.justifyContent = 'space-between';
                 mbox.style.alignItems = 'center';
                 mbox.innerHTML = `
-                    プレイヤー${i}:
+                    繝励Ξ繧､繝､繝ｼ${i}:
                     <select id="player_select${i}" style="width: 70%; margin-bottom: 0;">
                         <option value="----">----</option>
                         <option value="a">a</option>
@@ -797,10 +797,10 @@
                     if (ponElement.getAttribute('data-status') !== 'done') {
                         playPon();
                     }
-                    ponElement.innerHTML = '<span style="color: var(--success-color);">●</span>';
+                    ponElement.innerHTML = '<span style="color: var(--success-color);">笳・/span>';
                     ponElement.setAttribute('data-status', 'done');
                 } else {
-                    ponElement.innerHTML = '<span style="color: var(--surface-hover);">●</span>';
+                    ponElement.innerHTML = '<span style="color: var(--surface-hover);">笳・/span>';
                     ponElement.removeAttribute('data-status');
                 }
             }
@@ -865,7 +865,7 @@
                 const oldSum = Number(sum_scoreElement.innerText) || 0;
                 const newSum = Number(score) + oldSum;
 
-                // アニメーション完了後に状態を保存するように変更
+                // 繧｢繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ螳御ｺ・ｾ後↓迥ｶ諷九ｒ菫晏ｭ倥☆繧九ｈ縺・↓螟画峩
                 animateNumber(sum_scoreElement, oldSum, newSum, 600, () => {
                     saveState();
                 });
@@ -875,7 +875,7 @@
                     liquid.style.height = Math.min(100, (newSum / 300) * 100) + "%";
                 }
 
-                let result = [timestamp, selected_player, score, "合計:" + newSum, "審査点:"].concat(currentScores);
+                let result = [timestamp, selected_player, score, "蜷郁ｨ・" + newSum, "蟇ｩ譟ｻ轤ｹ:"].concat(currentScores);
 
                 callGas("saveData", result);
 
@@ -885,7 +885,7 @@
                 resetCurrentRound();
             } else {
                 playBuzz();
-                alarmElement.innerText = "採点が終わっていません";
+                alarmElement.innerText = "謗｡轤ｹ縺檎ｵゅｏ縺｣縺ｦ縺・∪縺帙ｓ";
                 setTimeout(() => { alarmElement.innerText = ""; }, 2000);
             }
         }
@@ -910,10 +910,10 @@
             } else {
                 if (lastAction.playerNum === null) {
                     playBuzz();
-                    alert("取り消せる操作がありません。");
+                    alert("蜿悶ｊ豸医○繧区桃菴懊′縺ゅｊ縺ｾ縺帙ｓ縲・);
                     return;
                 }
-                if (confirm("直前の得点登録を取り消しますか？")) {
+                if (confirm("逶ｴ蜑阪・蠕礼せ逋ｻ骭ｲ繧貞叙繧頑ｶ医＠縺ｾ縺吶°・・)) {
                     const targetScoreElement = document.getElementById('sum_score' + lastAction.playerNum);
                     let currentSum = Number(targetScoreElement.innerText);
                     const newSum = currentSum - lastAction.score;
@@ -929,14 +929,14 @@
                     lastAction.playerNum = null;
                     lastAction.score = 0;
                     saveState();
-                    alert("取り消しました。");
+                    alert("蜿悶ｊ豸医＠縺ｾ縺励◆縲・);
                 }
             }
-            callGas("saveData", ["undoしました"]);
+            callGas("saveData", ["undo縺励∪縺励◆"]);
         }
 
         function reset() {
-            if (confirm("全てのスコアを本当に0にリセットしますか？")) {
+            if (confirm("蜈ｨ縺ｦ縺ｮ繧ｹ繧ｳ繧｢繧呈悽蠖薙↓0縺ｫ繝ｪ繧ｻ繝・ヨ縺励∪縺吶°・・)) {
                 let playername_csv = [];
                 let score_csv = [];
                 for (let i = 1; i <= maxPlayers; i++) {
@@ -954,18 +954,18 @@
                 }
                 lastAction = { playerNum: null, score: 0 };
 
-                // タイマーのリセット
+                // 繧ｿ繧､繝槭・縺ｮ繝ｪ繧ｻ繝・ヨ
                 clearInterval(TimerInterval);
                 TimerRunning = false;
                 timeLeft = defaultTimerMinutes * 60;
                 document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
                 const btn = document.getElementById('timer_button');
                 if (btn) {
-                    btn.innerText = "開始";
+                    btn.innerText = "髢句ｧ・;
                     btn.className = "primary";
                 }
                 localStorage.removeItem(STORAGE_KEY);
-                // 必要最低限の再保存（設定値のみ保持したい場合はここで調整可能。今回は完全に消す）
+                // 蠢・ｦ∵怙菴朱剞縺ｮ蜀堺ｿ晏ｭ假ｼ郁ｨｭ螳壼､縺ｮ縺ｿ菫晄戟縺励◆縺・ｴ蜷医・縺薙％縺ｧ隱ｿ謨ｴ蜿ｯ閭ｽ縲ゆｻ雁屓縺ｯ螳悟・縺ｫ豸医☆・・
             }
         }
 
@@ -995,7 +995,7 @@
         function changeJudgeCount() {
             const newJudgeCount = parseInt(document.getElementById('judge_count_select').value, 10);
             if (newJudgeCount !== judgeCount) {
-                if (confirm("審査員人数を変更します。現在の入力途中のスコアはリセットされますがよろしいですか？")) {
+                if (confirm("蟇ｩ譟ｻ蜩｡莠ｺ謨ｰ繧貞､画峩縺励∪縺吶ら樟蝨ｨ縺ｮ蜈･蜉幃比ｸｭ縺ｮ繧ｹ繧ｳ繧｢縺ｯ繝ｪ繧ｻ繝・ヨ縺輔ｌ縺ｾ縺吶′繧医ｍ縺励＞縺ｧ縺吶°・・)) {
                     judgeCount = newJudgeCount;
                     saveState();
                     renderPons();
@@ -1058,9 +1058,9 @@
             try {
                 const response = await callGas("saveCsv", [playername_csv, score_csv]);
                 if (response && response.success) {
-                    alert("CSVデータを出力しました（スプレッドシートに保存されました）");
+                    alert("CSV繝・・繧ｿ繧貞・蜉帙＠縺ｾ縺励◆・医せ繝励Ξ繝・ラ繧ｷ繝ｼ繝医↓菫晏ｭ倥＆繧後∪縺励◆・・);
                 } else {
-                    alert("保存に失敗しました");
+                    alert("菫晏ｭ倥↓螟ｱ謨励＠縺ｾ縺励◆");
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -1072,7 +1072,7 @@
             const btn = document.getElementById('timer_button');
             if (!TimerRunning) {
                 TimerRunning = true;
-                btn.innerText = "停止";
+                btn.innerText = "蛛懈ｭ｢";
                 btn.className = "danger";
                 TimerInterval = setInterval(() => {
                     timeLeft--;
@@ -1083,20 +1083,20 @@
                     if (timeLeft <= 0) {
                         clearInterval(TimerInterval);
                         TimerRunning = false;
-                        btn.innerText = "開始";
+                        btn.innerText = "髢句ｧ・;
                         btn.className = "primary";
                     }
                 }, 1000);
             } else {
                 TimerRunning = false;
                 clearInterval(TimerInterval);
-                btn.innerText = "開始";
+                btn.innerText = "髢句ｧ・;
                 btn.className = "primary";
             }
         }
 
         // --- Start ---
-        // UIを保存された設定に合わせる
+        // UI繧剃ｿ晏ｭ倥＆繧後◆險ｭ螳壹↓蜷医ｏ縺帙ｋ
         document.getElementById('player_count_select').value = maxPlayers;
         document.getElementById('judge_count_select').value = judgeCount;
         document.getElementById('timer_count_select').value = defaultTimerMinutes;
