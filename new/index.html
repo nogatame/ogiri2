@@ -486,10 +486,15 @@
 
     <dialog id="explain">
         <h3>使い方説明</h3>
-        <p>1. 各審査員が手元の端末でスコアを入力。<br>
-            2. スコアが揃うと、中央の点数が自動計算されます。<br>
-            3. 右上のエリアでお題を「スライド」表示できます。<br>
-            4. 「登録」ボタンでプレイヤーに点数を加算します。
+        <p>取り消し：直前と点数入力or採点ボタンを取り消す<br>
+            完全リセット：名前以外を元に戻して、スプシに出力<br>
+            CSV出力：一旦、スプシに出力<br>
+            名前設定：名前はCSVファイルから読み込んで
+
+
+
+
+
         </p>
         <div class="dialog-actions">
             <button class="primary" onclick="closeExplain()">閉じる</button>
@@ -503,7 +508,7 @@
         const myonSound = new Audio('myon.mp3');
         const startSound = new Audio('start.mp3');
         const hundredSound = new Audio('hundred.mp3');
-        
+
         // 音量をデフォルト(1.0)から少し下げる
         ponSound.volume = 0.4;
         myonSound.volume = 0.4;
