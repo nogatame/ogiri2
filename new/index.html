@@ -12,19 +12,19 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --surface-color: #1e293b;
-            --surface-hover: #334155;
-            --primary-color: #38bdf8;
-            --primary-hover: #0284c7;
-            --success-color: #22c55e;
+            --bg-color: #f0fdf4;
+            --surface-color: #ffffff;
+            --surface-hover: #dcfce7;
+            --primary-color: #22c55e;
+            --primary-hover: #16a34a;
+            --success-color: #10b981;
             --danger-color: #ef4444;
-            --warning-color: #eab308;
-            --warning-hover: #ca8a04;
-            --text-color: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border-color: #334155;
-            --accent-color: #8b5cf6;
+            --warning-color: #f59e0b;
+            --warning-hover: #d97706;
+            --text-color: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #bbf7d0;
+            --accent-color: #0ea5e9;
         }
 
         body {
@@ -79,7 +79,7 @@
             background-color: var(--surface-color);
             padding: 1.5rem;
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             box-sizing: border-box;
             margin-bottom: 0 !important;
             max-width: none !important;
@@ -111,7 +111,7 @@
             background-color: var(--surface-color);
             padding: 2.5rem;
             border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             text-align: center;
             position: relative;
             box-sizing: border-box;
@@ -128,7 +128,7 @@
             background: #000;
             border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             border: 2px solid var(--accent-color);
             position: relative;
             margin: 0 auto;
@@ -225,7 +225,7 @@
             color: var(--text-color);
             line-height: 1;
             margin: 1rem 0;
-            text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
             min-height: 8rem;
         }
 
@@ -263,10 +263,10 @@
         }
 
         .player-name {
-            font-size: 18px;
+            font-size: 28px;
             color: var(--text-color);
             margin-bottom: 1.5rem;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         dialog {
@@ -275,14 +275,14 @@
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 2rem;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
             width: 90%;
             max-width: 500px;
         }
 
         dialog::backdrop {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(3px);
         }
 
@@ -319,7 +319,7 @@
         .player-gauge {
             width: 100%;
             height: 120px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.05);
             border: 2px solid var(--border-color);
             border-radius: 8px;
             margin-bottom: 1rem;
@@ -335,7 +335,7 @@
             background: linear-gradient(to top, var(--accent-color), var(--primary-color));
             transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
         }
 
         .liquid::after {
@@ -362,8 +362,7 @@
         <div class="top-section">
             <div class="top-left">
                 <div class="slides-container">
-                    <iframe
-                        id="slide_iframe"
+                    <iframe id="slide_iframe"
                         src="https://1drv.ms/p/c/01fbfc780d0ba3cc/IQSAx4aSYmsnQrtvzpqDs9hoAW1v4phIlVf-llRVU7lLGfQ?em=2&amp;wdAr=1.3333333333333333"
                         width="476px" height="288px" frameborder="0" title="PowerPoint Viewer">これは、<a target="_blank"
                             href="https://office.com/webapps">Office</a> の機能を利用した、<a target="_blank"
@@ -453,9 +452,15 @@
             スコアゲージの表示:
             <input type="checkbox" id="gauge_toggle" checked onchange="toggleGauge()" style="width: auto; margin: 0;">
         </label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
+            全員が3の場合は100点にする:
+            <input type="checkbox" id="all_three_hundred_toggle" checked onchange="toggleAllThreeHundred()"
+                style="width: auto; margin: 0;">
+        </label>
         <label style="display: flex; flex-direction: column; gap: 5px; margin-top: 1rem; cursor: pointer;">
             スライド埋め込みリンク:
-            <input type="text" id="slide_url_input" placeholder="<iframe src='...'> または URL" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color);">
+            <input type="text" id="slide_url_input" placeholder="<iframe src='...'> または URL"
+                style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color);">
         </label>
         <div class="dialog-actions">
             <button class="primary" onclick="closeSettings()">完了</button>
@@ -464,6 +469,12 @@
 
     <dialog id="nameModal">
         <h3>プレイヤー名設定</h3>
+        <label
+            style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; cursor: pointer; font-size: 14px;">
+            名前リスト (CSVファイル) を読み込む:
+            <input type="file" id="name_csv_upload" accept=".csv" onchange="loadNamesFromCSV(event)"
+                style="font-size: 14px; padding: 5px;">
+        </label>
         <div id="modal_player_container" style="display: flex; flex-direction: column; gap: 10px;">
             <!-- Generated by JS -->
         </div>
@@ -488,6 +499,17 @@
     <script>
         // --- Sound Effects ---
         let audioCtx = null;
+        const ponSound = new Audio('pon.mp3');
+        const myonSound = new Audio('myon.mp3');
+        const startSound = new Audio('start.mp3');
+        const hundredSound = new Audio('hundred.mp3');
+        
+        // 音量をデフォルト(1.0)から少し下げる
+        ponSound.volume = 0.4;
+        myonSound.volume = 0.4;
+        startSound.volume = 0.4;
+        hundredSound.volume = 0.4;
+
         function initAudio() {
             try {
                 if (!audioCtx) {
@@ -549,48 +571,24 @@
             } catch (e) { }
         }
 
+        function play100() {
+            try {
+                hundredSound.currentTime = 0;
+                hundredSound.play().catch(e => console.log(e));
+            } catch (e) { }
+        }
+
         function playDepressed() {
             try {
-                if ('speechSynthesis' in window) {
-                    const msg = new SpeechSynthesisUtterance("あーあ...");
-                    msg.lang = 'ja-JP';
-                    msg.pitch = 0.5;
-                    msg.rate = 0.7;
-                    window.speechSynthesis.speak(msg);
-                } else {
-                    initAudio();
-                    if (!audioCtx) return;
-                    const now = audioCtx.currentTime;
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.frequency.setValueAtTime(150, now);
-                    osc.frequency.linearRampToValueAtTime(50, now + 1.5);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.linearRampToValueAtTime(0, now + 1.5);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start();
-                    osc.stop(now + 1.5);
-                }
+                myonSound.currentTime = 0;
+                myonSound.play().catch(e => console.log(e));
             } catch (e) { }
         }
 
         function playPon() {
             try {
-                initAudio();
-                if (!audioCtx) return;
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(now + 0.2);
+                ponSound.currentTime = 0;
+                ponSound.play().catch(e => console.log(e));
             } catch (e) { }
         }
 
@@ -678,10 +676,13 @@
         let maxPlayers = 6;
         let enableSpecialSounds = localStorage.getItem('enableSpecialSounds') !== 'false';
         let showGauge = localStorage.getItem('showGauge') !== 'false';
+        let enableAllThreeIsHundred = localStorage.getItem('enableAllThreeIsHundred') !== 'false';
 
         let maxJudgesSystem = 6;
         let judgeCount = 4;
         let data = ["", "", "", "", "", ""];
+
+        let availableNames = JSON.parse(localStorage.getItem('ogiri_available_names')) || ["a", "b", "c", "d", "e", "f"];
 
         const STORAGE_KEY = 'ogiri_system_data';
 
@@ -773,17 +774,23 @@
                 mbox.style.display = 'flex';
                 mbox.style.justifyContent = 'space-between';
                 mbox.style.alignItems = 'center';
+
+                let optionsHtml = '<option value="----" ' + (currentNames[i - 1] === "----" ? "selected" : "") + '>----</option>';
+                let nameFound = false;
+                availableNames.forEach(name => {
+                    const isSelected = name === currentNames[i - 1];
+                    if (isSelected) nameFound = true;
+                    optionsHtml += `<option value="${name}" ${isSelected ? 'selected' : ''}>${name}</option>`;
+                });
+
+                if (currentNames[i - 1] !== "----" && !nameFound) {
+                    optionsHtml += `<option value="${currentNames[i - 1]}" style="display:none;" selected>${currentNames[i - 1]}</option>`;
+                }
+
                 mbox.innerHTML = `
                     プレイヤー${i}:
                     <select id="player_select${i}" style="width: 70%; margin-bottom: 0;">
-                        <option value="----">----</option>
-                        <option value="a">a</option>
-                        <option value="b">b</option>
-                        <option value="c">c</option>
-                        <option value="d">d</option>
-                        <option value="e">e</option>
-                        <option value="f">f</option>
-                        <option value="${currentNames[i - 1]}" style="display:none;" selected>${currentNames[i - 1]}</option>
+                        ${optionsHtml}
                     </select>
                 `;
                 modalContainer.appendChild(mbox);
@@ -861,11 +868,16 @@
                     }
                 });
 
+                if (enableAllThreeIsHundred && judgeCount > 4 && validScores.every(s => s.value === 3)) {
+                    finalProduct = 100;
+                }
+
                 const oldVal = isNaN(parseInt(displayElement.innerText)) ? 0 : parseInt(displayElement.innerText);
                 if (oldVal !== finalProduct) {
                     animateNumber(displayElement, oldVal, finalProduct, 800, () => {
                         if (enableSpecialSounds) {
                             if (finalProduct === 81) playShing();
+                            if (finalProduct === 100) play100();
                             if (finalProduct === 1) playDepressed();
                         }
                     });
@@ -1005,7 +1017,7 @@
                 if (match && match[1]) {
                     newUrl = match[1];
                 }
-                
+
                 if (newUrl) {
                     const iframe = document.getElementById('slide_iframe');
                     if (iframe && iframe.src !== newUrl) {
@@ -1062,6 +1074,37 @@
             document.body.setAttribute('data-show-gauge', showGauge);
         }
 
+        function toggleAllThreeHundred() {
+            enableAllThreeIsHundred = document.getElementById('all_three_hundred_toggle').checked;
+            localStorage.setItem('enableAllThreeIsHundred', enableAllThreeIsHundred);
+        }
+
+        function loadNamesFromCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const buffer = e.target.result;
+                let text = new TextDecoder('utf-8').decode(buffer);
+                if (text.includes('')) {
+                    text = new TextDecoder('shift-jis').decode(buffer);
+                }
+
+                const names = text.split(/[\r\n,]+/).map(n => n.trim().replace(/^"|"$/g, '')).filter(n => n.length > 0);
+                if (names.length > 0) {
+                    availableNames = names;
+                    localStorage.setItem('ogiri_available_names', JSON.stringify(availableNames));
+                    renderPlayers();
+                    alert("名前リストを更新しました。");
+                } else {
+                    alert("有効な名前が見つかりませんでした。");
+                }
+                event.target.value = "";
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
         function openNameModal() { nameModal.showModal(); }
         function closeNameModal() { nameModal.close(); }
 
@@ -1100,6 +1143,10 @@
 
         function startTimer() {
             initAudio();
+            try {
+                startSound.currentTime = 0;
+                startSound.play().catch(e => console.log(e));
+            } catch (e) { }
             const btn = document.getElementById('timer_button');
             if (!TimerRunning) {
                 TimerRunning = true;
@@ -1132,13 +1179,14 @@
         document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
         document.getElementById('sound_effect_toggle').checked = enableSpecialSounds;
         document.getElementById('gauge_toggle').checked = showGauge;
+        document.getElementById('all_three_hundred_toggle').checked = enableAllThreeIsHundred;
         document.body.setAttribute('data-show-gauge', showGauge);
-        
+
         const savedSlideInput = localStorage.getItem('savedSlideInput');
         if (savedSlideInput) {
             const input = document.getElementById('slide_url_input');
             if (input) input.value = savedSlideInput;
-            
+
             const match = savedSlideInput.match(/src="([^"]+)"/);
             if (match && match[1]) {
                 const iframe = document.getElementById('slide_iframe');
