@@ -94,9 +94,8 @@
         #timer_display {
             font-size: 56px;
             font-weight: 900;
-            color: var(--danger-color);
+            color: var(--text-color);
             font-variant-numeric: tabular-nums;
-            text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
             letter-spacing: 2px;
         }
 
@@ -616,7 +615,7 @@
             } catch (e) { }
         }
 
-        function animateNumber(element, start, end, duration, onComplete) {
+        function animateNumber(element, start, end, duration, onComplete, playSound = true) {
             if (element._animId) {
                 cancelAnimationFrame(element._animId);
             }
@@ -635,7 +634,7 @@
 
                 if (element.innerText !== String(current)) {
                     element.innerText = current;
-                    if (diff > 0) playTick(440 + (current % 81) * 10);
+                    if (playSound && diff > 0) playTick(440 + (current % 81) * 10);
                 }
 
                 if (progress < 1) {
@@ -909,7 +908,7 @@
 
                 animateNumber(sum_scoreElement, oldSum, newSum, 600, () => {
                     saveState();
-                });
+                }, false);
 
                 const liquid = document.getElementById('liquid' + player_number);
                 if (liquid) {
@@ -995,7 +994,9 @@
                 clearInterval(TimerInterval);
                 TimerRunning = false;
                 timeLeft = defaultTimerMinutes * 60;
-                document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+                const timerDisplay = document.getElementById('timer_display');
+                timerDisplay.innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+                timerDisplay.style.color = "var(--text-color)";
                 const btn = document.getElementById('timer_button');
                 if (btn) {
                     btn.innerText = "開始";
@@ -1050,7 +1051,9 @@
             saveState();
             if (!TimerRunning) {
                 timeLeft = defaultTimerMinutes * 60;
-                document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+                const timerDisplay = document.getElementById('timer_display');
+                timerDisplay.innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+                timerDisplay.style.color = "var(--text-color)";
             }
         }
 
@@ -1159,15 +1162,17 @@
                 btn.className = "danger";
                 TimerInterval = setInterval(() => {
                     timeLeft--;
-                    const minute = Math.floor(timeLeft / 60);
-                    const second = timeLeft % 60;
-                    document.getElementById('timer_display').innerText =
+                    const absTime = Math.abs(timeLeft);
+                    const minute = Math.floor(absTime / 60);
+                    const second = absTime % 60;
+                    const timerDisplay = document.getElementById('timer_display');
+                    timerDisplay.innerText =
                         String(minute).padStart(2, '0') + ":" + String(second).padStart(2, '0');
-                    if (timeLeft <= 0) {
-                        clearInterval(TimerInterval);
-                        TimerRunning = false;
-                        btn.innerText = "開始";
-                        btn.className = "primary";
+
+                    if (timeLeft < 0) {
+                        timerDisplay.style.color = "var(--danger-color)";
+                    } else {
+                        timerDisplay.style.color = "var(--text-color)";
                     }
                 }, 1000);
             } else {
@@ -1182,6 +1187,7 @@
         document.getElementById('judge_count_select').value = judgeCount;
         document.getElementById('timer_count_select').value = defaultTimerMinutes;
         document.getElementById('timer_display').innerText = String(defaultTimerMinutes).padStart(2, '0') + ":00";
+        document.getElementById('timer_display').style.color = "var(--text-color)";
         document.getElementById('sound_effect_toggle').checked = enableSpecialSounds;
         document.getElementById('gauge_toggle').checked = showGauge;
         document.getElementById('all_three_hundred_toggle').checked = enableAllThreeIsHundred;
