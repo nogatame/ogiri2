@@ -351,6 +351,27 @@
         body[data-show-gauge="false"] .player-gauge {
             display: none;
         }
+
+        body[data-show-sum="false"] .player-sum {
+            font-size: 0;
+        }
+        body[data-show-sum="false"] .player-sum::after {
+            content: "???";
+            font-size: 36px;
+        }
+
+        body[data-show-slide="false"] .top-left {
+            display: none;
+        }
+
+        body[data-show-slide="false"] .top-section {
+            justify-content: center;
+        }
+
+        body[data-show-slide="false"] .top-right {
+            max-width: 600px;
+            width: 100%;
+        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -450,6 +471,18 @@
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
             スコアゲージの表示:
             <input type="checkbox" id="gauge_toggle" checked onchange="toggleGauge()" style="width: auto; margin: 0;">
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
+            スライドの表示:
+            <input type="checkbox" id="slide_toggle" checked onchange="toggleSlide()" style="width: auto; margin: 0;">
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
+            累計点数の表示:
+            <input type="checkbox" id="sum_toggle" checked onchange="toggleSum()" style="width: auto; margin: 0;">
+        </label>
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
+            点数制限 (5回目以降は上位4つのみ加算):
+            <input type="checkbox" id="point_limit_toggle" onchange="togglePointLimit()" style="width: auto; margin: 0;">
         </label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
             全員が3の場合は100点にする:
@@ -681,6 +714,10 @@
         let enableSpecialSounds = localStorage.getItem('enableSpecialSounds') !== 'false';
         let showGauge = localStorage.getItem('showGauge') !== 'false';
         let enableAllThreeIsHundred = localStorage.getItem('enableAllThreeIsHundred') !== 'false';
+        let showSlide = localStorage.getItem('showSlide') !== 'false';
+        let showSum = localStorage.getItem('showSum') !== 'false';
+        let enablePointLimit = localStorage.getItem('enablePointLimit') === 'true';
+        let playerHistory = [[], [], [], [], [], []];
 
         let maxJudgesSystem = 6;
         let judgeCount = 4;
@@ -696,7 +733,8 @@
                 judgeCount,
                 defaultTimerMinutes,
                 playerNames: [],
-                playerScores: []
+                playerScores: [],
+                playerHistory: playerHistory
             };
             for (let i = 1; i <= 6; i++) {
                 const nameEl = document.getElementById('player_name' + i);
@@ -723,6 +761,44 @@
             judgeCount = savedData.judgeCount || 4;
             defaultTimerMinutes = savedData.defaultTimerMinutes || 5;
             timeLeft = defaultTimerMinutes * 60;
+            if (savedData.playerHistory) {
+                playerHistory = savedData.playerHistory;
+            } else if (savedData.playerScores) {
+                playerHistory = savedData.playerScores.map(score => {
+                    const val = Number(score);
+                    return val > 0 ? [val] : [];
+                });
+            }
+        }
+
+        function calculatePlayerSum(playerIdx) {
+            const history = playerHistory[playerIdx] || [];
+            if (enablePointLimit) {
+                if (history.length <= 4) {
+                    return history.reduce((sum, val) => sum + val, 0);
+                } else {
+                    const sorted = [...history].sort((a, b) => b - a);
+                    return sorted.slice(0, 4).reduce((sum, val) => sum + val, 0);
+                }
+            } else {
+                return history.reduce((sum, val) => sum + val, 0);
+            }
+        }
+
+        function recalculateAllScores() {
+            for (let i = 1; i <= maxPlayers; i++) {
+                const sum_scoreElement = document.getElementById('sum_score' + i);
+                if (!sum_scoreElement) continue;
+
+                const newSum = calculatePlayerSum(i - 1);
+                sum_scoreElement.innerText = newSum;
+
+                const liquid = document.getElementById('liquid' + i);
+                if (liquid) {
+                    liquid.style.height = Math.min(100, (newSum / 300) * 100) + "%";
+                }
+            }
+            saveState();
         }
 
         let displayElement = document.getElementById('display');
@@ -904,7 +980,13 @@
                 const sum_scoreElement = document.getElementById('sum_score' + player_number);
 
                 const oldSum = Number(sum_scoreElement.innerText) || 0;
-                const newSum = Number(score) + oldSum;
+
+                if (!playerHistory[player_number - 1]) {
+                    playerHistory[player_number - 1] = [];
+                }
+                playerHistory[player_number - 1].push(score);
+
+                const newSum = calculatePlayerSum(player_number - 1);
 
                 animateNumber(sum_scoreElement, oldSum, newSum, 600, () => {
                     saveState();
@@ -952,9 +1034,11 @@
                     return;
                 }
                 if (confirm("直前の得点登録を取り消しますか？")) {
+                    if (playerHistory[lastAction.playerNum - 1]) {
+                        playerHistory[lastAction.playerNum - 1].pop();
+                    }
                     const targetScoreElement = document.getElementById('sum_score' + lastAction.playerNum);
-                    let currentSum = Number(targetScoreElement.innerText);
-                    const newSum = currentSum - lastAction.score;
+                    const newSum = calculatePlayerSum(lastAction.playerNum - 1);
                     targetScoreElement.innerText = newSum;
 
                     const liquid = document.getElementById('liquid' + lastAction.playerNum);
@@ -983,6 +1067,7 @@
                 callGas("saveCsv", [playername_csv, score_csv]);
 
                 resetCurrentRound();
+                playerHistory = [[], [], [], [], [], []];
                 for (let i = 1; i <= maxPlayers; i++) {
                     let sum_scoreElement = document.getElementById('sum_score' + i);
                     if (sum_scoreElement) sum_scoreElement.innerText = 0;
@@ -1082,9 +1167,27 @@
             document.body.setAttribute('data-show-gauge', showGauge);
         }
 
+        function toggleSlide() {
+            showSlide = document.getElementById('slide_toggle').checked;
+            localStorage.setItem('showSlide', showSlide);
+            document.body.setAttribute('data-show-slide', showSlide);
+        }
+
+        function toggleSum() {
+            showSum = document.getElementById('sum_toggle').checked;
+            localStorage.setItem('showSum', showSum);
+            document.body.setAttribute('data-show-sum', showSum);
+        }
+
         function toggleAllThreeHundred() {
             enableAllThreeIsHundred = document.getElementById('all_three_hundred_toggle').checked;
             localStorage.setItem('enableAllThreeIsHundred', enableAllThreeIsHundred);
+        }
+
+        function togglePointLimit() {
+            enablePointLimit = document.getElementById('point_limit_toggle').checked;
+            localStorage.setItem('enablePointLimit', enablePointLimit);
+            recalculateAllScores();
         }
 
         function loadNamesFromCSV(event) {
@@ -1192,6 +1295,11 @@
         document.getElementById('gauge_toggle').checked = showGauge;
         document.getElementById('all_three_hundred_toggle').checked = enableAllThreeIsHundred;
         document.body.setAttribute('data-show-gauge', showGauge);
+        document.getElementById('slide_toggle').checked = showSlide;
+        document.body.setAttribute('data-show-slide', showSlide);
+        document.getElementById('sum_toggle').checked = showSum;
+        document.body.setAttribute('data-show-sum', showSum);
+        document.getElementById('point_limit_toggle').checked = enablePointLimit;
 
         const savedSlideInput = localStorage.getItem('savedSlideInput');
         if (savedSlideInput) {
