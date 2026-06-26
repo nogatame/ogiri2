@@ -355,6 +355,7 @@
         body[data-show-sum="false"] .player-sum {
             font-size: 0;
         }
+
         body[data-show-sum="false"] .player-sum::after {
             content: "???";
             font-size: 36px;
@@ -434,7 +435,7 @@
     <dialog id="settingsModal">
         <h3>システム設定</h3>
         <label>
-            プレイヤー人数 (1〜6):
+            プレイヤー人数 (1〜8):
             <select id="player_count_select" onchange="changePlayerCount()">
                 <option value="1">1人</option>
                 <option value="2">2人</option>
@@ -442,6 +443,8 @@
                 <option value="4">4人</option>
                 <option value="5">5人</option>
                 <option value="6" selected>6人</option>
+                <option value="7">7人</option>
+                <option value="8">8人</option>
             </select>
         </label>
         <label>
@@ -482,7 +485,8 @@
         </label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
             点数制限 (5回目以降は上位4つのみ加算):
-            <input type="checkbox" id="point_limit_toggle" onchange="togglePointLimit()" style="width: auto; margin: 0;">
+            <input type="checkbox" id="point_limit_toggle" onchange="togglePointLimit()"
+                style="width: auto; margin: 0;">
         </label>
         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 0.5rem;">
             全員が3の場合は100点にする:
@@ -681,7 +685,7 @@
             element._animId = window.requestAnimationFrame(step);
         }
 
-        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyv89MPyo1SDdaimgmednqDcUD6jQf4T-l9gFds9g6k3nX9fB7mgoI1uI4oC2eGEZ2O/exec";
+        const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyV4nTneJWXK2dZoF2dSFcXEPCykcEaDOdIQaedQJQemBkHErmb2zOgVz9RHwoyHzdO/exec";
 
         async function callGas(action, payload) {
             if (GAS_WEBAPP_URL.includes("ここにGASでデプロイした")) return { success: false, error: "GAS_WEBAPP_URL is not set" };
@@ -717,13 +721,13 @@
         let showSlide = localStorage.getItem('showSlide') !== 'false';
         let showSum = localStorage.getItem('showSum') !== 'false';
         let enablePointLimit = localStorage.getItem('enablePointLimit') === 'true';
-        let playerHistory = [[], [], [], [], [], []];
+        let playerHistory = [[], [], [], [], [], [], [], []];
 
         let maxJudgesSystem = 6;
         let judgeCount = 4;
         let data = ["", "", "", "", "", ""];
 
-        let availableNames = JSON.parse(localStorage.getItem('ogiri_available_names')) || ["a", "b", "c", "d", "e", "f"];
+        let availableNames = JSON.parse(localStorage.getItem('ogiri_available_names')) || ["a", "b", "c", "d", "e", "f", "g", "h"];
 
         const STORAGE_KEY = 'ogiri_system_data';
 
@@ -736,7 +740,7 @@
                 playerScores: [],
                 playerHistory: playerHistory
             };
-            for (let i = 1; i <= 6; i++) {
+            for (let i = 1; i <= 8; i++) {
                 const nameEl = document.getElementById('player_name' + i);
                 const scoreEl = document.getElementById('sum_score' + i);
                 state.playerNames.push(nameEl ? nameEl.innerText : "----");
@@ -825,7 +829,7 @@
             let currentScores = saved ? saved.playerScores : [];
 
             if (currentNames.length === 0) {
-                for (let i = 1; i <= 6; i++) {
+                for (let i = 1; i <= 8; i++) {
                     currentNames.push("----");
                     currentScores.push("0");
                 }
@@ -1061,13 +1065,15 @@
                 let playername_csv = [];
                 let score_csv = [];
                 for (let i = 1; i <= maxPlayers; i++) {
-                    playername_csv.push(document.getElementById("player_name" + i).innerText);
-                    score_csv.push(document.getElementById("sum_score" + i).innerText);
+                    const nameEl = document.getElementById("player_name" + i);
+                    const scoreEl = document.getElementById("sum_score" + i);
+                    playername_csv.push(nameEl ? nameEl.innerText : "");
+                    score_csv.push(scoreEl ? scoreEl.innerText : "");
                 }
                 callGas("saveCsv", [playername_csv, score_csv]);
 
                 resetCurrentRound();
-                playerHistory = [[], [], [], [], [], []];
+                playerHistory = [[], [], [], [], [], [], [], []];
                 for (let i = 1; i <= maxPlayers; i++) {
                     let sum_scoreElement = document.getElementById('sum_score' + i);
                     if (sum_scoreElement) sum_scoreElement.innerText = 0;
@@ -1126,7 +1132,17 @@
         }
 
         function changePlayerCount() {
-            maxPlayers = parseInt(document.getElementById('player_count_select').value, 10);
+            const newCount = parseInt(document.getElementById('player_count_select').value, 10);
+
+            const hasActiveGame = playerHistory.some(history => history && history.length > 0);
+            if (hasActiveGame) {
+                if (!confirm("⚠️ 現在進行中のゲームデータがあります。\n人数を変更すると、完全リセット時のCSV出力が正しく行われない可能性があります。\n先に「完全リセット」でCSV出力することをお勧めします。\n\n人数変更を続けますか？")) {
+                    document.getElementById('player_count_select').value = maxPlayers;
+                    return;
+                }
+            }
+
+            maxPlayers = newCount;
             saveState();
             renderPlayers();
         }
@@ -1220,6 +1236,14 @@
         function closeNameModal() { nameModal.close(); }
 
         function selectName() {
+            const hasActiveGame = playerHistory.some(history => history && history.length > 0);
+            if (hasActiveGame) {
+                if (!confirm("⚠️ 現在進行中のゲームデータがあります。\n名前を変更すると、完全リセット時のCSV出力の名前が変わります。\n先に「完全リセット」でCSV出力することをお勧めします。\n\n名前変更を続けますか？")) {
+                    nameModal.close();
+                    return;
+                }
+            }
+
             for (let i = 1; i <= maxPlayers; i++) {
                 let sel = document.getElementById("player_select" + i);
                 if (sel && sel.value !== "----") {
@@ -1237,8 +1261,10 @@
             let playername_csv = [];
             let score_csv = [];
             for (let i = 1; i <= maxPlayers; i++) {
-                playername_csv.push(document.getElementById("player_name" + i).innerText);
-                score_csv.push(document.getElementById("sum_score" + i).innerText);
+                const nameEl = document.getElementById("player_name" + i);
+                const scoreEl = document.getElementById("sum_score" + i);
+                playername_csv.push(nameEl ? nameEl.innerText : "");
+                score_csv.push(scoreEl ? scoreEl.innerText : "");
             }
             try {
                 const response = await callGas("saveCsv", [playername_csv, score_csv]);
